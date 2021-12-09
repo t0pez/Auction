@@ -1,7 +1,9 @@
-﻿namespace AuctionDAL.Models
+﻿using System;
+
+namespace AuctionDAL.Models
 {
     public class BaseModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }
