@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using AuctionDAL;
+using AuctionDAL.Models;
 
-namespace AuctionDAL.Models
+namespace AuctionBLL.ViewModels
 {
-    public class Lot : BaseModel
+    public class LotViewModel
     {
         public bool IsOpen { get; set; }
         public string Name { get; set; }
@@ -14,9 +17,11 @@ namespace AuctionDAL.Models
         
         public Money StartPrice { get; set; }
         public Money ActualPrice { get; set; }
-        
+
         public DateTime DateOfCreation { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
+        public int ParticipantsCount => Participants.Count();
     }
 }

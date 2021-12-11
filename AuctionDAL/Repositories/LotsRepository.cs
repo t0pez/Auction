@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AuctionDAL.Context;
+using AuctionDAL.Exceptions;
 using AuctionDAL.Models;
 
 namespace AuctionDAL.Repositories
@@ -36,27 +37,24 @@ namespace AuctionDAL.Repositories
 
         public async Task<Lot> GetLotByIdAsync(Guid id)
         {
-            var result = await Lots.FirstOrDefaultAsync(lot => lot.Id == id);
+            var item = await Lots.FirstOrDefaultAsync(lot => lot.Id == id);
 
-            if (result is null)
-                throw new InvalidOperationException("Lot is not found");
+            if (item is null)
+                throw new ItemNotFoundException(nameof(item));
 
-            return result;
+            return item;
         }
 
-        public async Task<bool> UpdateLotAsync(Lot updated)
+        public async Task UpdateLotAsync(Lot updated)
         {
-            var result = Lots.Attach(updated);
+            var item = Lots.Attach(updated);
+
+            if (item is null)
+                throw new ItemNotFoundException(nameof(updated));
+            
             _context.Entry(updated).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
-
-            return result is not null;
-        }
-
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

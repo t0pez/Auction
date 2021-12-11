@@ -3,7 +3,7 @@ using Ardalis.SmartEnum;
 
 namespace AuctionDAL
 {
-    public class Money
+    public sealed class Money
     {
         public decimal Amount { get; private set; }
         public readonly Currency Currency;
@@ -20,7 +20,6 @@ namespace AuctionDAL
                 throw new ArgumentNullException(nameof(left));
             if (right is null)
                 throw new ArgumentNullException(nameof(right));
-            
             if (left.Currency != right.Currency)
                 throw new InvalidOperationException("Currency types are different");
 
@@ -35,10 +34,8 @@ namespace AuctionDAL
                 throw new ArgumentNullException(nameof(left));
             if (right is null)
                 throw new ArgumentNullException(nameof(right));
-            
             if (left.Currency != right.Currency)
                 throw new InvalidOperationException("Currency types are different");
-
             if (left.Amount - right.Amount < 0)
                 throw new InvalidOperationException("Not enough money amount");
 
@@ -46,15 +43,7 @@ namespace AuctionDAL
 
             return new Money(left.Amount, left.Currency);
         }
-
-        void Foo()
-        {
-            var eur = Currency.Eur;
-            var a = new Money(100, Currency.Eur);
-            var b = new Money(200, eur);
-            var c = new Money(200, Currency.Uah);
-
-        }
+        
     }
 
     public sealed class Currency : SmartEnum<Currency>
@@ -73,6 +62,26 @@ namespace AuctionDAL
             IsoName = isoName;
             FullName = fullName;
             Symbol = symbol;
+        }
+
+        public static bool operator ==(Currency left, Currency right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+            
+            return left.Value == right.Value;
+        }
+        
+        public static bool operator !=(Currency left, Currency right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+            
+            return left.Value != right.Value;
         }
     }
 }
