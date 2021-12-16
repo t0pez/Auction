@@ -1,10 +1,12 @@
-﻿using AuctionDAL.Interfaces;
+﻿using System.Collections.Generic;
 
 namespace AuctionDAL.Models
 {
-    public class User : BaseModel, IHaveWallet
+    public class User : BaseModel
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public Wallet Wallet { get; set; }
+
+        public virtual ICollection<Lot> OwnedLots { get; set; }
+        public virtual ICollection<Lot> Lots { get; set; }
     }
 }

@@ -47,13 +47,10 @@ namespace AuctionDAL.Repositories
 
         public async Task UpdateLotAsync(Lot updated)
         {
-            var item = Lots.Attach(updated);
+            var item = await GetLotByIdAsync(updated.Id);
 
-            if (item is null)
-                throw new ItemNotFoundException(nameof(updated));
+            _context.Entry(item).CurrentValues.SetValues(updated);
             
-            _context.Entry(updated).State = EntityState.Modified;
-
             await _context.SaveChangesAsync();
         }
     }

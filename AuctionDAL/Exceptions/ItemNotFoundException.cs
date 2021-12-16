@@ -2,7 +2,7 @@
 
 namespace AuctionDAL.Exceptions
 {
-    public class ItemNotFoundException : Exception
+    public class ItemNotFoundException : DataLayerException
     {
         public ItemNotFoundException(string argumentName) : base(argumentName)
         {
