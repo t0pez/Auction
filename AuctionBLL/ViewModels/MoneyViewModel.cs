@@ -1,20 +1,26 @@
 ﻿using System;
 using Ardalis.SmartEnum;
 
-namespace AuctionDAL
+namespace AuctionBLL.ViewModels
 {
-    public sealed class Money
+    public sealed class MoneyViewModel
     {
         public decimal Amount { get; private set; }
         public readonly Currency Currency;
 
-        public Money(decimal amount, Currency currency)
+        public MoneyViewModel(decimal amount, Currency currency)
         {
             Amount = amount;
             Currency = currency;
         }
+        
+        public MoneyViewModel(decimal amount, int currency)
+        {
+            Amount = amount;
+            Currency = Currency.FromValue(currency);
+        }
 
-        public static Money operator +(Money left, Money right)
+        public static MoneyViewModel operator +(MoneyViewModel left, MoneyViewModel right)
         {
             if (left is null)
                 throw new ArgumentNullException(nameof(left));
@@ -25,10 +31,10 @@ namespace AuctionDAL
 
             left.Amount -= right.Amount;
 
-            return new Money(left.Amount, left.Currency);
+            return new MoneyViewModel(left.Amount, left.Currency);
         }
         
-        public static Money operator -(Money left, Money right)
+        public static MoneyViewModel operator -(MoneyViewModel left, MoneyViewModel right)
         {
             if (left is null)
                 throw new ArgumentNullException(nameof(left));
@@ -41,9 +47,32 @@ namespace AuctionDAL
 
             left.Amount -= right.Amount;
 
-            return new Money(left.Amount, left.Currency);
+            return new MoneyViewModel(left.Amount, left.Currency);
         }
         
+        public static bool operator >(MoneyViewModel left, MoneyViewModel right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+            if (left.Currency != right.Currency)
+                throw new InvalidOperationException("Currency types are different");
+
+            return left.Amount > right.Amount;
+        }
+
+        public static bool operator <(MoneyViewModel left, MoneyViewModel right)
+        {
+            if (left is null)
+                throw new ArgumentNullException(nameof(left));
+            if (right is null)
+                throw new ArgumentNullException(nameof(right));
+            if (left.Currency != right.Currency)
+                throw new InvalidOperationException("Currency types are different");
+
+            return left.Amount < right.Amount;
+        }
     }
 
     public sealed class Currency : SmartEnum<Currency>

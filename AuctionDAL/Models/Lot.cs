@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AuctionDAL.Models.Base;
 
 namespace AuctionDAL.Models
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AuctionDAL.Models
+namespace AuctionDAL.Models.Base
 {
     public class BaseModel
     {

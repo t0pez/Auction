@@ -11,6 +11,7 @@ namespace AuctionDAL.Repositories
         Task<IEnumerable<Lot>> GetAllOpenLotsAsync();
         Task<IEnumerable<Lot>> GetAllClosedLotsAsync();
         Task<Lot> GetLotByIdAsync(Guid id);
+        Task CreateLotAsync(Lot lot);
         Task UpdateLotAsync(Lot updated);
     }
 }

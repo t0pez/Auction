@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using AuctionDAL.Models.Base;
 
 namespace AuctionDAL.Models
 {
-    public class User : BaseModel
+    public abstract class User : BaseModel
     {
         public Wallet Wallet { get; set; }
 
         public virtual ICollection<Lot> OwnedLots { get; set; }
-        public virtual ICollection<Lot> Lots { get; set; }
+        public virtual ICollection<Lot> LotsAsParticipant { get; set; }
     }
 }

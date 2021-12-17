@@ -1,7 +1,12 @@
-﻿namespace AuctionDAL.Models
+﻿using System.Collections.Generic;
+using AuctionDAL.Models.Base;
+
+namespace AuctionDAL.Models
 {
-    public class Wallet
+    public class Wallet : BaseModel
     {
-        public Money Money { get; set; }
+        // TODO: public event NewAccountCreated 
+        // TODO: public event MoneyBalanceChanged 
+        public virtual ICollection<Money> Money { get; set; }
     }
 }

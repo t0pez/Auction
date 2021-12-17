@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AuctionDAL;
 using AuctionDAL.Models;
 
 namespace AuctionBLL.ViewModels
@@ -14,10 +13,10 @@ namespace AuctionBLL.ViewModels
         public string Description { get; set; }
 
         public User Owner { get; set; }
-        public IReadOnlyList<User> Participants { get; set; }
+        public List<User> Participants { get; set; }
         
-        public Money StartPrice { get; set; }
-        public Money ActualPrice { get; set; }
+        public MoneyViewModel StartPrice { get; set; }
+        public MoneyViewModel ActualPrice { get; set; }
 
         public DateTime DateOfCreation { get; set; }
         public DateTime? StartDate { get; set; }

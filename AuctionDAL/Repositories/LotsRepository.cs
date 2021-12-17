@@ -45,6 +45,16 @@ namespace AuctionDAL.Repositories
             return item;
         }
 
+        public async Task CreateLotAsync(Lot lot)
+        {
+            if (await Lots.AnyAsync(l => l.Id == lot.Id))
+                throw new ItemAlreadyExistsException(nameof(lot));
+
+            Lots.Add(lot);
+
+            await _context.SaveChangesAsync();
+        }
+        
         public async Task UpdateLotAsync(Lot updated)
         {
             var item = await GetLotByIdAsync(updated.Id);
