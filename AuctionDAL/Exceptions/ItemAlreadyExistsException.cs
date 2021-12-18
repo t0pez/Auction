@@ -2,7 +2,7 @@
 {
     public class ItemAlreadyExistsException : DataLayerException
     {
-        public ItemAlreadyExistsException(string message) : base(message)
+        public ItemAlreadyExistsException(string paramName) : base(paramName)
         {
         }
     }

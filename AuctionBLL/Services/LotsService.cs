@@ -100,11 +100,19 @@ namespace AuctionBLL.Services
             
             lot.Participants.Add(user);
             
-            // TODO: _logger.AddNote or smth
-            
             var mapped = MapLotViewModelToLot(lot);
 
-            await _repository.UpdateLotAsync(mapped);
+            try
+            {
+                await _repository.UpdateLotAsync(mapped);
+                
+                // TODO: _logger.AddNote or smth
+            }
+            catch (ItemNotFoundException)
+            {
+                throw;
+            }
+            
             
             return lot;
         }
@@ -118,7 +126,7 @@ namespace AuctionBLL.Services
             if (newPrice is null)
                 throw new ArgumentNullException(nameof(newPrice));
             if (newPrice < lot.ActualPrice)
-                throw new InvalidOperationException("New price lower than actual");
+                throw new InvalidOperationException("New price can not be lower than actual");
             if (lot.Participants.Contains(user) == false)
                 throw new InvalidOperationException("User is not a participant of the lot");
 
