@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AuctionBLL.ViewModels;
+using AuctionBLL.Dto;
 using AuctionDAL.Exceptions;
 using AuctionDAL.Models;
 using AuctionDAL.Repositories;
@@ -9,7 +9,7 @@ using AutoMapper;
 
 namespace AuctionBLL.Services
 {
-    public class EntityUsersService : IEntityUserService
+    public class EntityUsersService : IEntityUsersService
     {
         private readonly IUserRepository<EntityUser> _repository;
         private readonly IMapper _mapper;
@@ -20,25 +20,27 @@ namespace AuctionBLL.Services
             _mapper = mapper;
         }
 
-        private IEnumerable<EntityUserViewModel> MapEntitiesModelsToViewModels(IEnumerable<EntityUser> unmapped) => _mapper.Map<IEnumerable<EntityUser>, IEnumerable<EntityUserViewModel>>(unmapped);
-        private EntityUserViewModel MapEntityToViewModel(EntityUser unmapped) => _mapper.Map<EntityUser, EntityUserViewModel>(unmapped);
+        private IEnumerable<EntityUserDto> MapModelsToDto(IEnumerable<EntityUser> unmapped) =>
+            _mapper.Map<IEnumerable<EntityUser>, IEnumerable<EntityUserDto>>(unmapped);
+        private EntityUserDto MapModelToDto(EntityUser unmapped) => _mapper.Map<EntityUser, EntityUserDto>(unmapped);
+        private EntityUser MapViewModelToDto(EntityUserDto unmapped) => _mapper.Map<EntityUserDto, EntityUser>(unmapped);
 
-        public async Task<IEnumerable<EntityUserViewModel>> GetAllUsersAsync()
+        public async Task<IEnumerable<EntityUserDto>> GetAllUsersAsync()
         {
             var unmapped = await _repository.GetAllUsersAsync();
 
-            var mapped = MapEntitiesModelsToViewModels(unmapped);
+            var mapped = MapModelsToDto(unmapped);
 
             return mapped;
         }
         
-        public async Task<EntityUserViewModel> GetUserByIdAsync(Guid id)
+        public async Task<EntityUserDto> GetUserByIdAsync(Guid id)
         {
             try
             {
                 var unmapped = await _repository.GetUserByIdAsync(id);
 
-                var mapped = MapEntityToViewModel(unmapped);
+                var mapped = MapModelToDto(unmapped);
 
                 return mapped;
             }
@@ -48,19 +50,49 @@ namespace AuctionBLL.Services
             }
         }
 
-        public Task<EntityUserViewModel> CreateUserAsync(EntityUserViewModel newUser)
+        public async Task<EntityUserDto> CreateUserAsync(EntityUserDto newUser)
         {
-            throw new NotImplementedException();
+            if (newUser is null)
+                throw new ArgumentNullException(nameof(newUser));
+            
+            AssertModelIsCorrect(newUser);
+
+            var mapped = MapViewModelToDto(newUser);
+            try
+            {
+                await _repository.CreateUserAsync(mapped);
+            }
+            catch (ItemAlreadyExistsException)
+            {
+                // TODO
+            }
+
+            return newUser;
         }
 
-        public Task<EntityUserViewModel> UpdateUserAsync(EntityUser updated)
+        public async Task<EntityUserDto> UpdateUserAsync(EntityUserDto updated)
         {
-            throw new NotImplementedException();
+            if (updated is null)
+                throw new ArgumentNullException(nameof(updated));
+            
+            AssertModelIsCorrect(updated);
+
+            var mapped = MapViewModelToDto(updated);
+            try
+            {
+                await _repository.UpdateUser(mapped);
+            }
+            catch (ItemNotFoundException)
+            {
+                // TODO
+            }
+
+            return updated;
         }
 
-        private void AssertModelIsCorrect(EntityUser entity)
+        private void AssertModelIsCorrect(EntityUserDto dto)
         {
-            if (String.IsNullOrEmpty(entity.Name))
+            if (String.IsNullOrEmpty(dto.Name))
                 throw new ArgumentException("Wrong parameters");
         }
     }

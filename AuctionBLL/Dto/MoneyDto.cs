@@ -1,26 +1,26 @@
 ﻿using System;
 using Ardalis.SmartEnum;
 
-namespace AuctionBLL.ViewModels
+namespace AuctionBLL.Dto
 {
-    public sealed class MoneyViewModel
+    public sealed class MoneyDto
     {
         public decimal Amount { get; private set; }
         public readonly Currency Currency;
 
-        public MoneyViewModel(decimal amount, Currency currency)
+        public MoneyDto(decimal amount, Currency currency)
         {
             Amount = amount;
             Currency = currency;
         }
         
-        public MoneyViewModel(decimal amount, int currency)
+        public MoneyDto(decimal amount, int currency)
         {
             Amount = amount;
             Currency = Currency.FromValue(currency);
         }
 
-        public static MoneyViewModel operator +(MoneyViewModel left, MoneyViewModel right)
+        public static MoneyDto operator +(MoneyDto left, MoneyDto right)
         {
             if (left is null)
                 throw new ArgumentNullException(nameof(left));
@@ -31,10 +31,10 @@ namespace AuctionBLL.ViewModels
 
             left.Amount -= right.Amount;
 
-            return new MoneyViewModel(left.Amount, left.Currency);
+            return new MoneyDto(left.Amount, left.Currency);
         }
         
-        public static MoneyViewModel operator -(MoneyViewModel left, MoneyViewModel right)
+        public static MoneyDto operator -(MoneyDto left, MoneyDto right)
         {
             if (left is null)
                 throw new ArgumentNullException(nameof(left));
@@ -47,10 +47,10 @@ namespace AuctionBLL.ViewModels
 
             left.Amount -= right.Amount;
 
-            return new MoneyViewModel(left.Amount, left.Currency);
+            return new MoneyDto(left.Amount, left.Currency);
         }
         
-        public static bool operator >(MoneyViewModel left, MoneyViewModel right)
+        public static bool operator >(MoneyDto left, MoneyDto right)
         {
             if (left is null)
                 throw new ArgumentNullException(nameof(left));
@@ -62,7 +62,7 @@ namespace AuctionBLL.ViewModels
             return left.Amount > right.Amount;
         }
 
-        public static bool operator <(MoneyViewModel left, MoneyViewModel right)
+        public static bool operator <(MoneyDto left, MoneyDto right)
         {
             if (left is null)
                 throw new ArgumentNullException(nameof(left));

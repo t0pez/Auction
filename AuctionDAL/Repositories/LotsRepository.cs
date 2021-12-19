@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AuctionDAL.Context;
+using AuctionDAL.Enums;
 using AuctionDAL.Exceptions;
 using AuctionDAL.Models;
 
@@ -25,14 +26,19 @@ namespace AuctionDAL.Repositories
             return await Lots.ToListAsync();
         }
 
-        public async Task<IEnumerable<Lot>> GetAllOpenLotsAsync()
+        public async Task<IEnumerable<Lot>> GetAllCreatedLotsAsync()
         {
-            return await Lots.Where(lot => lot.IsOpen).ToListAsync();
+            return await Lots.Where(lot => lot.Status == LotStatus.Created).ToListAsync();
+        }
+        
+        public async Task<IEnumerable<Lot>> GetAllOpenedLotsAsync()
+        {
+            return await Lots.Where(lot => lot.Status == LotStatus.Opened).ToListAsync();
         }
 
         public async Task<IEnumerable<Lot>> GetAllClosedLotsAsync()
         {
-            return await Lots.Where(lot => lot.IsOpen == false).ToListAsync();
+            return await Lots.Where(lot => lot.Status == LotStatus.Closed).ToListAsync();
         }
 
         public async Task<Lot> GetLotByIdAsync(Guid id)
