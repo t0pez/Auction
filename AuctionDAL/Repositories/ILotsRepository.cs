@@ -8,9 +8,7 @@ namespace AuctionDAL.Repositories
     public interface ILotsRepository
     {
         Task<IEnumerable<Lot>> GetAllLotsAsync();
-        Task<IEnumerable<Lot>> GetAllCreatedLotsAsync();
-        Task<IEnumerable<Lot>> GetAllOpenedLotsAsync();
-        Task<IEnumerable<Lot>> GetAllClosedLotsAsync();
+        Task<IEnumerable<Lot>> GetLotsByPredicateAsync(Func<Lot, bool> predicate);
         Task<Lot> GetLotByIdAsync(Guid id);
         Task CreateLotAsync(Lot lot);
         Task UpdateLotAsync(Lot updated);

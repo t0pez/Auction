@@ -26,19 +26,9 @@ namespace AuctionDAL.Repositories
             return await Lots.ToListAsync();
         }
 
-        public async Task<IEnumerable<Lot>> GetAllCreatedLotsAsync()
+        public async Task<IEnumerable<Lot>> GetLotsByPredicateAsync(Func<Lot, bool> predicate)
         {
-            return await Lots.Where(lot => lot.Status == LotStatus.Created).ToListAsync();
-        }
-        
-        public async Task<IEnumerable<Lot>> GetAllOpenedLotsAsync()
-        {
-            return await Lots.Where(lot => lot.Status == LotStatus.Opened).ToListAsync();
-        }
-
-        public async Task<IEnumerable<Lot>> GetAllClosedLotsAsync()
-        {
-            return await Lots.Where(lot => lot.Status == LotStatus.Closed).ToListAsync();
+            return await Lots.Where(predicate).AsQueryable().ToListAsync();
         }
 
         public async Task<Lot> GetLotByIdAsync(Guid id)

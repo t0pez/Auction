@@ -39,7 +39,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllCreatedLotsAsync()
         {
-            var unmappedItems = await _repository.GetAllCreatedLotsAsync();
+            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == LotStatus.Created);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -48,7 +48,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllOpenedLotsAsync()
         {
-            var unmappedItems = await _repository.GetAllOpenedLotsAsync();
+            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == LotStatus.Opened);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -57,7 +57,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllClosedLotsAsync()
         {
-            var unmappedItems = await _repository.GetAllClosedLotsAsync();
+            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == LotStatus.Closed);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -129,8 +129,7 @@ namespace AuctionBLL.Services
             {
                 throw;
             }
-            
-            
+
             return lot;
         }
 
