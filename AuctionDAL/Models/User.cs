@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using AuctionDAL.Models.Base;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AuctionDAL.Models
 {
-    public abstract class User : BaseModel
+    public abstract class User : IdentityUser
     {
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Lot> OwnedLots { get; set; }

@@ -26,6 +26,11 @@ namespace AuctionDAL.Repositories
 
         public async Task<IndividualUser> GetUserByIdAsync(Guid id)
         {
+            return await GetUserByIdAsync(id.ToString());
+        }
+        
+        public async Task<IndividualUser> GetUserByIdAsync(string id)
+        {
             var item = await Users.FirstOrDefaultAsync(user => user.Id == id);
 
             if (item is null)
