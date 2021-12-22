@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using AuctionDAL.Context;
+using AuctionDAL.Models;
 
 namespace AuctionWeb.Controllers
 {
@@ -10,6 +12,7 @@ namespace AuctionWeb.Controllers
     {
         public ActionResult Index()
         {
+
             return View();
         }
 

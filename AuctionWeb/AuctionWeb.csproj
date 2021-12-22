@@ -169,6 +169,10 @@
     <Compile Include="ViewModels\LoginInfoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\AuctionDB.mdf" />
+    <Content Include="App_Data\AuctionDB_log.ldf">
+      <DependentUpon>AuctionDB.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -208,7 +212,6 @@
     <Content Include="Views\Users\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Views\Lots\" />
   </ItemGroup>
   <ItemGroup>
@@ -228,6 +231,10 @@
     <ProjectReference Include="..\AuctionBLL\AuctionBLL.csproj">
       <Project>{1364d659-2fe5-455e-8e69-769e46bfe595}</Project>
       <Name>AuctionBLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AuctionDAL\AuctionDAL.csproj">
+      <Project>{E3CF8AFC-1760-44CF-A886-2D3624D8571F}</Project>
+      <Name>AuctionDAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

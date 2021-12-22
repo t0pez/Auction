@@ -23,6 +23,7 @@ namespace AuctionDAL.Models
         public DateTime TimeForStep { get; set; }
         
         public virtual User Owner { get; set; }
+        public virtual User Buyer { get; set; }
         public virtual IEnumerable<User> Participants { get; set; }
         public virtual IEnumerable<LotStepLog> Steps { get; set; }
     }

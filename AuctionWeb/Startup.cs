@@ -14,7 +14,8 @@ namespace AuctionWeb
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Users/Login")
+                LoginPath = new PathString("/Users/LogIn"),
+                LogoutPath = new PathString("/Users/LogOut")
             });
         }
     }

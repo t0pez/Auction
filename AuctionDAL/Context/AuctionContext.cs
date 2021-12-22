@@ -5,12 +5,12 @@ namespace AuctionDAL.Context
 {
     public class AuctionContext : DbContext
     {
-        // TODO: Add database file (use Visual Studio templates)
-        // TODO: Edit config files
-        // TODO: DbSets for logs (one for all or split?)
+        public AuctionContext() : base("AuctionContext")
+        {
+        }
         
-        public DbSet<IndividualUser> IndividualUsers { get; set; }
-        public DbSet<EntityUser> EntityUsers { get; set; }
-        public DbSet<Lot> Lots { get; set; } 
+        public DbSet<Lot> Lots { get; set; }
+        public DbSet<IndividualUser> Individuals { get; set; }
+        public DbSet<EntityUser> Entities { get; set; }
     }
 }

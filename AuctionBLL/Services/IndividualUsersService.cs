@@ -43,7 +43,7 @@ namespace AuctionBLL.Services
         {
             try
             {
-                var unmapped = await _repository.GetUserByIdAsync(id);
+                var unmapped = await _repository.FindByIdAsync(id.ToString());
 
                 var mapped = MapModelToViewModel(unmapped);
 
@@ -66,7 +66,7 @@ namespace AuctionBLL.Services
             var mapped = MapViewModelToModel(newUser);
             try
             {
-                await _repository.CreateUserAsync(mapped);
+                await _repository.CreateAsync(mapped);
             }
             catch (ItemAlreadyExistsException)
             {
@@ -86,7 +86,7 @@ namespace AuctionBLL.Services
             var mapped = MapViewModelToModel(updated);
             try
             {
-                await _repository.UpdateUser(mapped);
+                await _repository.UpdateAsync(mapped);
             }
             catch (ItemNotFoundException)
             {
