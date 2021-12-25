@@ -19,11 +19,11 @@ namespace AuctionDAL.Models
         public DateTime DateOfCreation { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public DateTime ProlongationTime { get; set; }
-        public DateTime TimeForStep { get; set; }
+        public TimeSpan ProlongationTime { get; set; }
+        public TimeSpan TimeForStep { get; set; }
         
         public virtual User Owner { get; set; }
-        public virtual User Buyer { get; set; }
+        public virtual User? Buyer { get; set; }
         public virtual IEnumerable<User> Participants { get; set; }
         public virtual IEnumerable<LotStepLog> Steps { get; set; }
     }

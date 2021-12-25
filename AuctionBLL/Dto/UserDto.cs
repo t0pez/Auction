@@ -15,7 +15,7 @@ namespace AuctionBLL.Dto
         public string FirstName { get; set; }
         public string LastName { get; set; }
         
-        public Wallet Type { get; set; } // TODO: change to non-DAL entity
+        public WalletDto Wallet { get; set; }
 
         public ICollection<LotDto> OwnedLots { get; set; }
         public ICollection<LotDto> AsParticipant { get; set; }

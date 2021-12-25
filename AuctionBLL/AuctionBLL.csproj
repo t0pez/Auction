@@ -10,11 +10,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="10.1.1" />
+      <Folder Include="Exceptions" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions" />
+      <PackageReference Include="AutoMapper" Version="10.1.1" />
+      <PackageReference Include="Ninject.MVC5" Version="3.3.0" />
     </ItemGroup>
 
 </Project>

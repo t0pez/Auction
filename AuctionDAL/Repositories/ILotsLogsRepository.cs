@@ -1,4 +1,5 @@
-﻿using AuctionDAL.Models;
+﻿using AuctionDAL.Logs;
+using AuctionDAL.Models;
 
 namespace AuctionDAL.Repositories
 {

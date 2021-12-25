@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuctionBLL.Dto;
@@ -44,16 +45,18 @@ namespace AuctionBLL.Services
                 UserName = newUser.UserName,
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
-                Wallet = new Wallet(),
+                Wallet = new Wallet{Id = Guid.NewGuid()},
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
 
             var operationResult = await _repository.UserManager.CreateAsync(user, newUser.Password);
-            if (operationResult.Succeeded == false)
-                throw new InvalidOperationException();
 
-            await _repository.UserManager.AddToRoleAsync(user.Id, newUser.Role);
+            if (operationResult.Errors.Any())
+                throw new InvalidOperationException("Smth has go wrong");
+
+            await _repository.UserManager.AddToRoleAsync(user.Id, "user");
+            await _repository.SaveChangesAsync();
         }
 
         public async Task<ClaimsIdentity> LoginAsync(UserDto userDto)
@@ -61,7 +64,7 @@ namespace AuctionBLL.Services
             var user = await _repository.UserManager.FindAsync(userDto.UserName, userDto.Password);
 
             if (user is null)
-                throw new InvalidOperationException("");
+                throw new InvalidOperationException("User not found");
 
             var result = await _repository.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
 

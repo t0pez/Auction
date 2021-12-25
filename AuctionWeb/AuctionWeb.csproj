@@ -43,6 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -182,6 +185,8 @@
     </Compile>
     <Compile Include="Infrastructure\DependencyInjectionConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\Lots\CreateModel.cs" />
+    <Compile Include="ViewModels\Lots\DetailsModel.cs" />
     <Compile Include="ViewModels\Users\LoginInfoModel.cs" />
     <Compile Include="ViewModels\Users\RegisterModel.cs" />
   </ItemGroup>
@@ -227,12 +232,11 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Users\Login.cshtml" />
-    <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\Lots\Create.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Lots\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -250,10 +254,6 @@
     <ProjectReference Include="..\AuctionBLL\AuctionBLL.csproj">
       <Project>{1364d659-2fe5-455e-8e69-769e46bfe595}</Project>
       <Name>AuctionBLL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AuctionDAL\AuctionDAL.csproj">
-      <Project>{E3CF8AFC-1760-44CF-A886-2D3624D8571F}</Project>
-      <Name>AuctionDAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

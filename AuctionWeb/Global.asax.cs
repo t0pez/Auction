@@ -23,7 +23,7 @@ namespace AuctionWeb
 
             var configuration = new DependencyInjectionConfiguration();
             var kernel = new StandardKernel(configuration);
-            // kernel.Unbind<ModelValidatorProvider>();
+            kernel.Unbind<ModelValidatorProvider>();
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
         }
     }

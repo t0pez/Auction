@@ -1,6 +1,6 @@
-﻿using AuctionDAL.Logs;
+﻿using AuctionDAL.Models;
 
-namespace AuctionDAL.Models
+namespace AuctionDAL.Logs
 {
     public class LotLog : Log
     {

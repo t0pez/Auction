@@ -199,7 +199,7 @@ namespace AuctionBLL.Services
         {
             if (String.IsNullOrEmpty(lot.Name)
                 || String.IsNullOrEmpty(lot.Description)
-                || lot.Owner is null
+                || lot.OwnerId is null
                 || lot.StartPrice is null
                 || lot.MinStepPrice is null
                 || lot.MinStepPrice.Amount > 0)

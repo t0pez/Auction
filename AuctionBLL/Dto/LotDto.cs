@@ -20,10 +20,11 @@ namespace AuctionBLL.Dto
         public DateTime DateOfCreation { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public DateTime ProlongationTime { get; set; }
-        public DateTime TimeForStep { get; set; }
+        public TimeSpan ProlongationTime { get; set; }
+        public TimeSpan TimeForStep { get; set; }
         
-        public UserDto Owner { get; set; }
+        public string OwnerId { get; set; }
+        public string? BuyerId { get; set; }
         public List<UserDto> Participants { get; set; }
         public List<LotStepLogDto> Steps { get; set; }
     }
