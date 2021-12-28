@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.EnterpriseServices;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using AuctionBLL.Dto;
 using AuctionBLL.Services;
 using AuctionWeb.ViewModels.Lots;
+using AutoMapper;
 using Microsoft.AspNet.Identity;
 
 namespace AuctionWeb.Controllers
@@ -15,16 +13,20 @@ namespace AuctionWeb.Controllers
     public class LotsController : Controller
     {
         private readonly ILotsService _lotsService;
+        private readonly IMapper _mapper;
+        
 
-        public LotsController(ILotsService lotsService)
+        public LotsController(ILotsService lotsService, IMapper mapper)
         {
             _lotsService = lotsService;
+            _mapper = mapper;
         }
 
 
         // GET: Lots
         public ActionResult Index()
         {
+            
             return View();
         }
 
@@ -37,6 +39,11 @@ namespace AuctionWeb.Controllers
         // GET: Lots/Create
         public ActionResult Create()
         {
+            var currencies = Currency.List.Select(currency => new SelectListItem()
+                {Value = currency.Value.ToString(), Text = currency.IsoName}).ToList();
+
+            var selectList = new SelectList(currencies, "Value", "Text");
+            ViewBag.Currencies = selectList;
             return View();
         }
 
@@ -47,31 +54,16 @@ namespace AuctionWeb.Controllers
         {
             try
             {
+                var dto = _mapper.Map<LotDto>(model);
+                dto.OwnerId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<string>();
 
-                var dto = new LotDto
-                {
-                    Id = Guid.NewGuid(),
-
-                    Name = model.Name,
-                    Description = model.Description,
-
-                    StartPrice = model.StartPrice,
-                    ActualPrice = model.StartPrice,
-                    MinStepPrice = model.MinStep,
-
-                    DateOfCreation = DateTime.Now,
-                    StartDate = model.StartTime,
-                    ProlongationTime = model.ProlongationTime,
-                    TimeForStep = model.TimeForStep,
-
-                    OwnerId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<string>()
-                };
+                await _lotsService.CreateLotAsync(dto);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
 

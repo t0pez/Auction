@@ -48,10 +48,10 @@
                 .ForeignKey("dbo.Users", t => t.User_Id)
                 .ForeignKey("dbo.Users", t => t.User_Id1)
                 .ForeignKey("dbo.Users", t => t.Buyer_Id)
-                .ForeignKey("dbo.Moneys", t => t.HighestPrice_Id)
-                .ForeignKey("dbo.Moneys", t => t.MinStepPrice_Id)
+                .ForeignKey("dbo.Money", t => t.HighestPrice_Id)
+                .ForeignKey("dbo.Money", t => t.MinStepPrice_Id)
                 .ForeignKey("dbo.Users", t => t.Owner_Id)
-                .ForeignKey("dbo.Moneys", t => t.StartPrice_Id)
+                .ForeignKey("dbo.Money", t => t.StartPrice_Id)
                 .Index(t => t.User_Id)
                 .Index(t => t.User_Id1)
                 .Index(t => t.Buyer_Id)
@@ -69,7 +69,7 @@
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.Moneys",
+                "dbo.Money",
                 c => new
                     {
                         Id = c.Guid(nullable: false),
@@ -85,16 +85,16 @@
         
         public override void Down()
         {
-            DropForeignKey("dbo.Lots", "StartPrice_Id", "dbo.Moneys");
+            DropForeignKey("dbo.Lots", "StartPrice_Id", "dbo.Money");
             DropForeignKey("dbo.Lots", "Owner_Id", "dbo.Users");
-            DropForeignKey("dbo.Lots", "MinStepPrice_Id", "dbo.Moneys");
-            DropForeignKey("dbo.Lots", "HighestPrice_Id", "dbo.Moneys");
+            DropForeignKey("dbo.Lots", "MinStepPrice_Id", "dbo.Money");
+            DropForeignKey("dbo.Lots", "HighestPrice_Id", "dbo.Money");
             DropForeignKey("dbo.Lots", "Buyer_Id", "dbo.Users");
             DropForeignKey("dbo.Users", "Wallet_Id", "dbo.Wallets");
-            DropForeignKey("dbo.Moneys", "Wallet_Id", "dbo.Wallets");
+            DropForeignKey("dbo.Money", "Wallet_Id", "dbo.Wallets");
             DropForeignKey("dbo.Lots", "User_Id1", "dbo.Users");
             DropForeignKey("dbo.Lots", "User_Id", "dbo.Users");
-            DropIndex("dbo.Moneys", new[] { "Wallet_Id" });
+            DropIndex("dbo.Money", new[] { "Wallet_Id" });
             DropIndex("dbo.Lots", new[] { "StartPrice_Id" });
             DropIndex("dbo.Lots", new[] { "Owner_Id" });
             DropIndex("dbo.Lots", new[] { "MinStepPrice_Id" });
@@ -103,7 +103,7 @@
             DropIndex("dbo.Lots", new[] { "User_Id1" });
             DropIndex("dbo.Lots", new[] { "User_Id" });
             DropIndex("dbo.Users", new[] { "Wallet_Id" });
-            DropTable("dbo.Moneys");
+            DropTable("dbo.Money");
             DropTable("dbo.Wallets");
             DropTable("dbo.Lots");
             DropTable("dbo.Users");

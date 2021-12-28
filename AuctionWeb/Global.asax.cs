@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using AuctionWeb.Infrastructure;
 using Ninject;
-using Ninject.Modules;
 using Ninject.Web.Mvc;
 
 namespace AuctionWeb
@@ -20,9 +15,10 @@ namespace AuctionWeb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            var configuration = new DependencyInjectionConfiguration();
-            var kernel = new StandardKernel(configuration);
+            
+            var bllConfig = new AuctionBLL.Infrastructure.DependencyInjectionConfiguration();
+            var plConfig = new DependencyInjectionConfiguration();
+            var kernel = new StandardKernel(bllConfig, plConfig);
             kernel.Unbind<ModelValidatorProvider>();
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
         }

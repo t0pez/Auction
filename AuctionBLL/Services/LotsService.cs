@@ -101,6 +101,7 @@ namespace AuctionBLL.Services
             catch (ItemAlreadyExistsException)
             {
                 // TODO: ?
+                throw;
             }
 
             return lot;
