@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using AuctionDAL.Enums;
-using AuctionDAL.Models;
+using AuctionBLL.Enums;
 
 namespace AuctionBLL.Dto
 {
@@ -23,8 +22,8 @@ namespace AuctionBLL.Dto
         public TimeSpan ProlongationTime { get; set; }
         public TimeSpan TimeForStep { get; set; }
         
-        public string OwnerId { get; set; }
-        public string? BuyerId { get; set; }
+        public UserDto Owner { get; set; }
+        public UserDto? Buyer { get; set; }
         public List<UserDto> Participants { get; set; }
         public List<LotStepLogDto> Steps { get; set; }
     }

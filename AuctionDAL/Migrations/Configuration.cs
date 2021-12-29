@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
+using AuctionDAL.Logs;
 using AuctionDAL.Models;
+using AuctionDAL.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AuctionDAL.Migrations
 {
     using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<AuctionDAL.Context.AuctionContext>
     {
@@ -17,10 +18,11 @@ namespace AuctionDAL.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(AuctionDAL.Context.AuctionContext context)
+        protected override async void Seed(AuctionDAL.Context.AuctionContext context)
         {
             var userManager = new UserManager<User>(new UserStore<User>(context));
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            var lotsRepository = new LotsRepository(context);
 
             roleManager.Create(new IdentityRole {Name = "user"});
             roleManager.Create(new IdentityRole {Name = "admin"});
@@ -31,7 +33,7 @@ namespace AuctionDAL.Migrations
                 UserName = "user",
                 FirstName = "First",
                 LastName = "User",
-                Wallet = new Wallet { Id = Guid.NewGuid() },
+                Wallet = new Wallet {Id = Guid.NewGuid()},
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
@@ -46,14 +48,39 @@ namespace AuctionDAL.Migrations
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
-
+            
             userManager.Create(user, "useruser");
             userManager.Create(admin, "adminadmin");
 
             userManager.AddToRole(user.Id, "user");
             userManager.AddToRole(admin.Id, "admin");
 
-            context.SaveChanges();
+            var lot = new Lot
+            {
+                Id = Guid.NewGuid(),
+                Status = 0,
+                Name = "First lot",
+                Description = "Some description for the lot",
+
+                StartPrice = new Money {Id = Guid.NewGuid(), Amount = 1_000, Currency = 1},
+                HighestPrice = new Money {Id = Guid.NewGuid(), Amount = 1_000, Currency = 1},
+                MinStepPrice = new Money {Id = Guid.NewGuid(), Amount = 100, Currency = 1},
+
+                DateOfCreation = DateTime.Now,
+                StartDate = null,
+                EndDate = null,
+                ProlongationTime = new TimeSpan(0, 10, 0),
+                TimeForStep = new TimeSpan(0, 10, 0),
+
+                Owner = user,
+                Buyer = null,
+                Participants = new List<User>(),
+                Steps = new List<LotStepLog>()
+            };
+
+            await lotsRepository.CreateLotAsync(lot);
+
+            await context.SaveChangesAsync();
         }
     }
 }

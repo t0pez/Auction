@@ -37,7 +37,7 @@ namespace AuctionWeb.Controllers
             {
                 var userDto = new UserDto // TODO: Mapper
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.NewGuid().ToString(),
                     Password = registerModel.Password,
                     UserName = registerModel.UserName,
                     FirstName = registerModel.FirstName,
@@ -49,11 +49,12 @@ namespace AuctionWeb.Controllers
                 };
 
                 await _usersService.CreateAsync(userDto);
+                
                 return View();
             }
             catch (InvalidOperationException)
             {
-                return Redirect("google.com"); // TODO: show message
+                return HttpNotFound(); // TODO: show message
             }
         }
 

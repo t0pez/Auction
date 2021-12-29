@@ -20,7 +20,9 @@ namespace AuctionWeb.Infrastructure
                         new MoneyDto(model.StartPrice, Convert.ToInt32(model.Currency))))
                 .ForMember(dto => dto.MinStepPrice,
                     expression => expression.MapFrom(model => 
-                        new MoneyDto(model.StartPrice, Convert.ToInt32(model.Currency))));
+                        new MoneyDto(model.MinStepPrice, Convert.ToInt32(model.Currency))));
+
+            CreateMap<LotDto, ListModel>();
         }
     }
 }

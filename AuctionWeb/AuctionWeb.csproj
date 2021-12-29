@@ -277,6 +277,7 @@
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Lots\Create.cshtml" />
+    <Content Include="Views\Lots\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

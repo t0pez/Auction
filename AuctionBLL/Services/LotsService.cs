@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AuctionBLL.Dto;
-using AuctionDAL.Enums;
+﻿using AuctionBLL.Dto;
+using AuctionBLL.Enums;
 using AuctionDAL.Exceptions;
 using AuctionDAL.Models;
 using AuctionDAL.Repositories;
 using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AuctionBLL.Services
 {
@@ -39,7 +39,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllCreatedLotsAsync()
         {
-            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == LotStatus.Created);
+            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Created);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -48,7 +48,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllOpenedLotsAsync()
         {
-            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == LotStatus.Opened);
+            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Opened);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -57,7 +57,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllClosedLotsAsync()
         {
-            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == LotStatus.Closed);
+            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Closed);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -200,10 +200,11 @@ namespace AuctionBLL.Services
         {
             if (String.IsNullOrEmpty(lot.Name)
                 || String.IsNullOrEmpty(lot.Description)
-                || lot.OwnerId is null
+                || lot.Owner is null
                 || lot.StartPrice is null
+                || lot.StartPrice.Amount < 0
                 || lot.MinStepPrice is null
-                || lot.MinStepPrice.Amount > 0)
+                || lot.MinStepPrice.Amount < 0)
                 throw new ArgumentException($"Argument parameters is not correct", nameof(lot));
         }
     }

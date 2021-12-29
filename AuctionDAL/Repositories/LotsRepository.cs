@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AuctionDAL.Context;
-using AuctionDAL.Enums;
 using AuctionDAL.Exceptions;
 using AuctionDAL.Models;
 
@@ -26,9 +26,9 @@ namespace AuctionDAL.Repositories
             return await Lots.ToListAsync();
         }
 
-        public async Task<IEnumerable<Lot>> GetLotsByPredicateAsync(Func<Lot, bool> predicate)
+        public Task<IEnumerable<Lot>> GetLotsByPredicateAsync(Func<Lot, bool> predicate)
         {
-            return await Lots.Where(predicate).AsQueryable().ToListAsync();
+            return Task<IEnumerable<Lot>>.Factory.StartNew(() => Lots.Where(predicate).ToList());
         }
 
         public async Task<Lot> GetLotByIdAsync(Guid id)
@@ -47,10 +47,10 @@ namespace AuctionDAL.Repositories
                 throw new ItemAlreadyExistsException(nameof(lot));
 
             Lots.Add(lot);
-
+            
             await _context.SaveChangesAsync();
         }
-        
+
         public async Task UpdateLotAsync(Lot updated)
         {
             var item = await GetLotByIdAsync(updated.Id);

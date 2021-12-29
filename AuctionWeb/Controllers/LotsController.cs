@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -24,10 +25,13 @@ namespace AuctionWeb.Controllers
 
 
         // GET: Lots
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            var unmapped = await _lotsService.GetAllOpenedLotsAsync();
+
+            var mapped = _mapper.Map<IEnumerable<ListModel>>(unmapped);
             
-            return View();
+            return View(mapped);
         }
 
         // GET: Lots/Details/5
@@ -55,7 +59,10 @@ namespace AuctionWeb.Controllers
             try
             {
                 var dto = _mapper.Map<LotDto>(model);
-                dto.OwnerId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<string>();
+                dto.Owner = new UserDto()
+                {
+                    Id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<string>()
+                };
 
                 await _lotsService.CreateLotAsync(dto);
 
