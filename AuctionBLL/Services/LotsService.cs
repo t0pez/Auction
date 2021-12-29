@@ -7,17 +7,18 @@ using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AuctionDAL;
 
 namespace AuctionBLL.Services
 {
     public class LotsService : ILotsService
     {
-        private readonly ILotsRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public LotsService(ILotsRepository repository, IMapper mapper)
+        public LotsService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -30,7 +31,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllLotsAsync()
         {
-            var unmappedItems = await _repository.GetAllLotsAsync();
+            var unmappedItems = await _unitOfWork.LotsRepository.GetAllLotsAsync();
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -39,7 +40,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllCreatedLotsAsync()
         {
-            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Created);
+            var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Created);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -48,7 +49,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllOpenedLotsAsync()
         {
-            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Opened);
+            var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Opened);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -57,7 +58,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<LotDto>> GetAllClosedLotsAsync()
         {
-            var unmappedItems = await _repository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Closed);
+            var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Closed);
 
             var mappedItems = MapLotsToViewModels(unmappedItems);
 
@@ -68,7 +69,7 @@ namespace AuctionBLL.Services
         {
             try
             {
-                var unmappedItem = await _repository.GetLotByIdAsync(id);
+                var unmappedItem = await _unitOfWork.LotsRepository.GetLotByIdAsync(id);
 
                 var mappedItem = MapLotToViewModel(unmappedItem);
 
@@ -87,16 +88,29 @@ namespace AuctionBLL.Services
             
             AssertModelIsValid(lot);
 
+            var owner = await _unitOfWork.UserManager.FindByIdAsync(lot.Owner.Id);
+
+            if (owner is null)
+                throw new InvalidOperationException("User is not authorized");
+
             lot.Id = Guid.NewGuid();
             lot.Status = LotStatus.Created;
             lot.DateOfCreation = DateTime.Now;
-            
+            lot.ActualPrice = lot.StartPrice;
+
             // TODO: sub to event when needs to open
 
             var mapped = MapLotViewModelToLot(lot);
+            mapped.Owner = owner;
+            mapped.HighestPrice.Id = Guid.NewGuid();
+            mapped.StartPrice.Id = Guid.NewGuid();
+            mapped.MinStepPrice.Id = Guid.NewGuid();
+            mapped.HighestPrice.Currency = mapped.StartPrice.Currency;
+            mapped.HighestPrice.Amount = mapped.StartPrice.Amount;
+
             try
             {
-                await _repository.CreateLotAsync(mapped);
+                await _unitOfWork.LotsRepository.CreateLotAsync(mapped);
             }
             catch (ItemAlreadyExistsException)
             {
@@ -122,7 +136,7 @@ namespace AuctionBLL.Services
 
             try
             {
-                await _repository.UpdateLotAsync(mapped);
+                await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
                 
                 // TODO: _logger.AddNote or smth
             }
@@ -153,7 +167,7 @@ namespace AuctionBLL.Services
             
             var mapped = MapLotViewModelToLot(lot);
             
-            await _repository.UpdateLotAsync(mapped);
+            await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
 
             return lot;
         }
@@ -173,7 +187,7 @@ namespace AuctionBLL.Services
             
             var mapped = MapLotViewModelToLot(lot);
 
-            await _repository.UpdateLotAsync(mapped);
+            await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
 
             return lot;
         }
@@ -191,7 +205,7 @@ namespace AuctionBLL.Services
 
             var mapped = MapLotViewModelToLot(lot);
 
-            await _repository.UpdateLotAsync(mapped);
+            await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
 
             return lot;
         }

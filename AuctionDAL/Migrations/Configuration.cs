@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
-using AuctionDAL.Logs;
+﻿using AuctionDAL.Logs;
 using AuctionDAL.Models;
 using AuctionDAL.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Collections.Generic;
 
 namespace AuctionDAL.Migrations
 {
@@ -63,7 +62,7 @@ namespace AuctionDAL.Migrations
                 Description = "Some description for the lot",
 
                 StartPrice = new Money {Id = Guid.NewGuid(), Amount = 1_000, Currency = 1},
-                HighestPrice = new Money {Id = Guid.NewGuid(), Amount = 1_000, Currency = 1},
+                HighestPrice = new Money {Id = Guid.NewGuid()},
                 MinStepPrice = new Money {Id = Guid.NewGuid(), Amount = 100, Currency = 1},
 
                 DateOfCreation = DateTime.Now,
@@ -77,6 +76,9 @@ namespace AuctionDAL.Migrations
                 Participants = new List<User>(),
                 Steps = new List<LotStepLog>()
             };
+
+            lot.HighestPrice.Currency = lot.StartPrice.Currency;
+            lot.HighestPrice.Amount = lot.StartPrice.Amount;
 
             await lotsRepository.CreateLotAsync(lot);
 

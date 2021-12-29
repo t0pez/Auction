@@ -1,4 +1,5 @@
 ﻿using AuctionBLL.Services;
+using AuctionDAL;
 using AuctionDAL.Context;
 using AuctionDAL.Repositories;
 using AutoMapper;
@@ -9,7 +10,7 @@ namespace AuctionBLL.Infrastructure
     {
         public IUsersService CreateUsersService()
         {
-            return new UsersService(new UsersRepository(new AuctionContext()));
+            return new UsersService(new UnitOfWork(new AuctionContext()));
         }
     }
 }

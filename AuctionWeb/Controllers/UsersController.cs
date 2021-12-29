@@ -67,33 +67,32 @@ namespace AuctionWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LogIn(LoginInfoModel loginInfo)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid == false) 
+                return View();
+
+            var userDto = new UserDto
             {
-                var userDto = new UserDto
-                {
-                    UserName = loginInfo.Login,
-                    Password = loginInfo.Password
-                };
+                UserName = loginInfo.Login,
+                Password = loginInfo.Password
+            };
 
-                var claim = await _usersService.LoginAsync(userDto);
+            var claim = await _usersService.LoginAsync(userDto);
 
-                if (claim is null)
-                {
-                    ModelState.AddModelError("", "Wrong login or password");
-                    return View(loginInfo);
-                }
-
-                var authManager = HttpContext.GetOwinContext().Authentication;
-                authManager.SignOut();
-                authManager.SignIn(new AuthenticationProperties
-                {
-                    IsPersistent = true
-                }, claim);
-                
-                return RedirectToAction("Index", "Home");
+            if (claim is null)
+            {
+                ModelState.AddModelError("", "Wrong login or password");
+                return View(loginInfo);
             }
 
-            return View();
+            var authManager = HttpContext.GetOwinContext().Authentication;
+            authManager.SignOut();
+            authManager.SignIn(new AuthenticationProperties
+            {
+                IsPersistent = true
+            }, claim);
+                
+            return RedirectToAction("Index", "Home");
+
         }
 
     }

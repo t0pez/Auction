@@ -1,4 +1,4 @@
-﻿using AuctionDAL.Repositories;
+﻿using AuctionDAL;
 using Ninject.Modules;
 
 namespace AuctionBLL.Infrastructure
@@ -7,8 +7,7 @@ namespace AuctionBLL.Infrastructure
     {
         public override void Load()
         {
-            Bind<IUsersRepository>().To<UsersRepository>();
-            Bind<ILotsRepository>().To<LotsRepository>();
+            Bind<IUnitOfWork>().To<UnitOfWork>();
         }
     }
 }

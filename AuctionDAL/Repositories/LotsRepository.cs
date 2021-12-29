@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using AuctionDAL.Context;
+using AuctionDAL.Exceptions;
+using AuctionDAL.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using AuctionDAL.Context;
-using AuctionDAL.Exceptions;
-using AuctionDAL.Models;
 
 namespace AuctionDAL.Repositories
 {
