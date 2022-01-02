@@ -11,5 +11,6 @@ namespace AuctionBLL.Services
         void AddRange(IEnumerable<(TKey, DateTime)> source);
         void Remove(TKey key);
         void Prolong(TKey key, DateTime newDate);
+        void Prolong(TKey key, TimeSpan span);
     }
 }

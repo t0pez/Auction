@@ -40,8 +40,18 @@ namespace AuctionBLL.Services
         {
             if (_pairs.ContainsKey(id) == false)
                 throw new InvalidOperationException();
+            if (_pairs[id] > newDate)
+                throw new InvalidOperationException();
 
             _pairs[id] = newDate;
+        }
+
+        public void Prolong(TKey id, TimeSpan span)
+        {
+            if (_pairs.ContainsKey(id) == false)
+               throw new InvalidOperationException();
+
+            _pairs[id] += span;
         }
 
         private void CheckDates()

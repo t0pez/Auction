@@ -1,16 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using AuctionBLL.Dto;
+using AuctionBLL.Enums;
+using AuctionDAL.Models;
+using AutoMapper;
 
 namespace AuctionWeb.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IMapper _mapper;
+
+        public HomeController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         public ActionResult Index()
         {
-
             return View();
         }
 

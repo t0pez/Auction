@@ -25,7 +25,7 @@ namespace AuctionWeb.ViewModels.Lots
         public DateTime StartDate { get; set; }
         [Required] 
         [DataType(DataType.Time)] 
-        public DateTime StartTime { get; set; }
+        public TimeSpan StartTime { get; set; }
 
         [Required] 
         [DataType(DataType.Time)] 

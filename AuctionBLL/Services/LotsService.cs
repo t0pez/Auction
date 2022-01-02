@@ -1,13 +1,12 @@
 ﻿using AuctionBLL.Dto;
 using AuctionBLL.Enums;
+using AuctionDAL;
 using AuctionDAL.Exceptions;
 using AuctionDAL.Models;
-using AuctionDAL.Repositories;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AuctionDAL;
 
 namespace AuctionBLL.Services
 {

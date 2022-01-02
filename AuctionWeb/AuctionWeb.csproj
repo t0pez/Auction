@@ -278,6 +278,7 @@
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Lots\Create.cshtml" />
     <Content Include="Views\Lots\Index.cshtml" />
+    <Content Include="Views\Lots\Details.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -289,6 +290,10 @@
     <ProjectReference Include="..\AuctionBLL\AuctionBLL.csproj">
       <Project>{1364d659-2fe5-455e-8e69-769e46bfe595}</Project>
       <Name>AuctionBLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AuctionDAL\AuctionDAL.csproj">
+      <Project>{e3cf8afc-1760-44cf-a886-2d3624d8571f}</Project>
+      <Name>AuctionDAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

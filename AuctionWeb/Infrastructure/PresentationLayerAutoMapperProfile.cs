@@ -1,7 +1,7 @@
-﻿using System;
-using AuctionBLL.Dto;
+﻿using AuctionBLL.Dto;
 using AuctionWeb.ViewModels.Lots;
 using AutoMapper;
+using System;
 
 namespace AuctionWeb.Infrastructure
 {
@@ -9,11 +9,14 @@ namespace AuctionWeb.Infrastructure
     {
         public PresentationLayerAutoMapperProfile()
         {
+            // TODO: change map: wrong mapping currency
+
+            CreateMap<LotDto, DetailsModel>();
+            
             CreateMap<CreateModel, LotDto>()
                 .ForMember(dto => dto.StartDate,
                     expression => expression.MapFrom(model =>
-                        new DateTime()
-                            .AddTicks(model.StartDate.Ticks)
+                        new DateTime(model.StartDate.Ticks)
                             .AddTicks(model.StartTime.Ticks)))
                 .ForMember(dto => dto.StartPrice,
                     expression => expression.MapFrom(model => 

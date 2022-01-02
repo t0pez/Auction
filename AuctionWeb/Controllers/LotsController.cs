@@ -28,26 +28,41 @@ namespace AuctionWeb.Controllers
         // GET: Lots
         public async Task<ActionResult> Index()
         {
-            var unmapped = await _lotsService.GetAllOpenedLotsAsync();
+            var unmapped = await _lotsService.GetAllLotsAsync();
 
-            var mapped = _mapper.Map<IEnumerable<ListModel>>(unmapped);
+            var mapped = _mapper.Map<IEnumerable<ListModel>>(unmapped); // TODO: change view to new view model
             
             return View(mapped);
         }
 
         // GET: Lots/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(Guid id)
         {
-            return View();
+            try
+            {
+                var unmapped = await _lotsService.GetLotByIdAsync(id);
+
+                var mapped = _mapper.Map<DetailsModel>(unmapped);
+
+                return View(mapped);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
         // GET: Lots/Create
         public ActionResult Create()
         {
             var currencies = Currency.List.Select(currency => new SelectListItem()
-                {Value = currency.Value.ToString(), Text = currency.IsoName}).ToList();
+            {
+                Value = currency.Value.ToString(), 
+                Text = currency.IsoName
+            }).ToList();
 
             var selectList = new SelectList(currencies, "Value", "Text");
+
             ViewBag.Currencies = selectList;
             return View();
         }

@@ -11,11 +11,15 @@ namespace AuctionBLL.Infrastructure
         // TODO: ? IdToEntityConverter
         public BusinessLayerAutoMapperProfile()
         {
+            CreateMap<Currency, int>().ConvertUsing(currency => currency.Value);
+            
             CreateMap<Money, MoneyDto>().ConstructUsing(money => new MoneyDto(money.Amount, money.Currency));
 
             CreateMap<MoneyDto, Money>()
                 .ForMember(money => money.Currency,
-                    expression => expression.MapFrom(dto => dto.Currency.Value));
+                    expression => expression.MapFrom(dto => dto.Currency))
+                .ForMember(money => money.Id,
+                    expression => expression.MapFrom(dto => Guid.NewGuid()));
 
 
             CreateMap<WalletDto, Wallet>().ReverseMap();
