@@ -47,43 +47,50 @@
                 @Html.DisplayFor(model => model.ActualPrice.Currency.IsoName)
             </div>
             
-            @if (Model.Participants.Select(user => user.Id).Contains(User.Identity.GetUserId()) == false)
-            {
-
-                using (Html.BeginForm("SetUserAsParticipant", "Lots", FormMethod.Post))
-                {
-                    <div class="">
-                        <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
-                    </div>
-
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                }
-                
-            }
-            else
-            {
-                using (Html.BeginForm("SetNewPrice", "Lots", FormMethod.Post))
+            @{
+                var userId = User.Identity.GetUserId();
+                if (userId != Model.Owner.Id)
                 {
 
-                    var newPrice = 0m;
+                    if (Model.Participants.Select(user => user.Id).Contains(userId) == false)
+                    {
 
-                    <div class="">
+                        using (Html.BeginForm("SetUserAsParticipant", "Lots", FormMethod.Post))
+                        {
+                            <div class="">
+                                <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
+                            </div>
 
-                        <div class="">
-                            <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
-                        </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        }
 
-                        <div class="form-floating mb-3 col-md-6 offset-md-4">
-                            @Html.Editor(nameof(newPrice), new {htmlAttributes = new {@class = "form-control", @placeholder = "New price"}})
-                            @Html.Label(nameof(newPrice), htmlAttributes: new {@class = " "})
-                        </div>
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("SetNewPrice", "Lots", FormMethod.Post))
+                        {
 
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </div>
+                            var newPrice = 0m;
+
+                            <div class="">
+
+                                <div class="">
+                                    <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
+                                </div>
+
+                                <div class="form-floating mb-3 col-md-6 offset-md-4">
+                                    @Html.Editor(nameof(newPrice), new {htmlAttributes = new {@class = "form-control", @placeholder = "New price"}})
+                                    @Html.Label(nameof(newPrice), htmlAttributes: new {@class = " "})
+                                </div>
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        }
+                    }
                 }
             }
 

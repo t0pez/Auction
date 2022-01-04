@@ -99,7 +99,7 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.SetLotActualPriceAsync(lotId, userId, newPrice);
 
-                return await Details(lotId);
+                return RedirectToAction("Details", new { id = lotId });
             }
             catch(Exception e)
             {

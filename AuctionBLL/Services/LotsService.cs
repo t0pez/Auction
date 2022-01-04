@@ -128,17 +128,19 @@ namespace AuctionBLL.Services
                 var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
                 var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
 
-                if(lot.Participants is not null)
+                //if(lot.Participants is not null)
                     if (lot.Participants.Contains(user))
                         throw new InvalidOperationException("User is already a participant");
 
-                var participants = (lot.Participants ?? new List<User>()).ToList();
-                participants.Add(user);
-                lot.Participants = participants;
+                lot.Participants.Add(user);
+                user.LotsAsParticipant.Add(lot);
 
-                await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+                var lotUpdate = _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+                var userUpdate = _unitOfWork.UserManager.UpdateAsync(user);
 
-                // TODO: _logger.AddNote or smth
+                await Task.WhenAll(lotUpdate, userUpdate);
+
+                await _unitOfWork.SaveChangesAsync();
 
                 var mapped = MapLotToViewModel(lot);
 
