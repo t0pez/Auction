@@ -34,8 +34,7 @@ namespace AuctionWeb.Controllers
             
             return View(mapped);
         }
-
-        // GET: Lots/Details/5
+        
         public async Task<ActionResult> Details(Guid id)
         {
             try
@@ -77,12 +76,48 @@ namespace AuctionWeb.Controllers
                 var dto = _mapper.Map<LotDto>(model);
                 dto.Owner = new UserDto()
                 {
-                    Id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<string>()
+                    Id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId()
                 };
 
                 await _lotsService.CreateLotAsync(dto);
 
                 return RedirectToAction("Index");
+            }
+            catch(Exception e)
+            {
+                return View("Error");
+            }
+        }
+
+        [Authorize(Roles = "user, admin")]
+        [HttpPost]
+        public async Task<ActionResult> SetNewPrice(Guid lotId, decimal newPrice)
+        {
+            try
+            {
+                var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+
+                await _lotsService.SetLotActualPriceAsync(lotId, userId, newPrice);
+
+                return await Details(lotId);
+            }
+            catch(Exception e)
+            {
+                return View("Error");
+            }
+        }
+        
+        [Authorize(Roles = "user, admin")]
+        [HttpPost]
+        public async Task<ActionResult> SetUserAsParticipant(Guid lotId)
+        {
+            try
+            {
+                var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+
+                await _lotsService.AddParticipantAsync(lotId, userId);
+
+                return RedirectToAction("Details", new { id = lotId });
             }
             catch(Exception e)
             {

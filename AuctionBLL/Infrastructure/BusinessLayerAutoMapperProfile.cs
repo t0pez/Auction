@@ -32,7 +32,7 @@ namespace AuctionBLL.Infrastructure
                     expression => expression.MapFrom(dto => dto.ActualPrice))
                 .ForMember(lot => lot.Owner,
                     expression => expression.MapFrom(dto => dto.Owner))
-                .ForMember(lot => lot.Buyer,
+                .ForMember(lot => lot.Acquirer,
                     expression => expression.MapFrom(dto => dto.Buyer))
                 .ForMember(lot => lot.Status,
                     expression => expression.MapFrom(dto => (int) dto.Status));
@@ -43,7 +43,7 @@ namespace AuctionBLL.Infrastructure
                 .ForMember(dto => dto.Owner,
                     expression => expression.MapFrom(lot => lot.Owner))
                 .ForMember(dto => dto.Buyer,
-                    expression => expression.MapFrom(lot => lot.Buyer))
+                    expression => expression.MapFrom(lot => lot.Acquirer))
                 .ForMember(dto => dto.Status,
                     expression => expression.MapFrom(lot => (LotStatus) lot.Status));
 

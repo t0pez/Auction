@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Identity;
+﻿using System.Collections.Generic;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AuctionDAL.Models
@@ -14,5 +11,6 @@ namespace AuctionDAL.Models
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Lot> OwnedLots { get; set; }
         public virtual ICollection<Lot> LotsAsParticipant { get; set; }
+        public virtual ICollection<Lot> AcquiredLots { get; set; }
     }
 }

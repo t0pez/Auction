@@ -6,6 +6,7 @@ using AuctionDAL.Models;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AuctionBLL.Services
@@ -21,7 +22,7 @@ namespace AuctionBLL.Services
             _mapper = mapper;
         }
 
-        private IEnumerable<LotDto> MapLotsToViewModels(IEnumerable<Lot> unmappedItems) =>
+        private IEnumerable<LotDto> MapLotsToDto(IEnumerable<Lot> unmappedItems) =>
             _mapper.Map<IEnumerable<Lot>, IEnumerable<LotDto>>(unmappedItems);
         
         private LotDto MapLotToViewModel(Lot unmapped) => _mapper.Map<Lot, LotDto>(unmapped);
@@ -32,7 +33,7 @@ namespace AuctionBLL.Services
         {
             var unmappedItems = await _unitOfWork.LotsRepository.GetAllLotsAsync();
 
-            var mappedItems = MapLotsToViewModels(unmappedItems);
+            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
 
             return mappedItems;
         }
@@ -41,7 +42,7 @@ namespace AuctionBLL.Services
         {
             var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Created);
 
-            var mappedItems = MapLotsToViewModels(unmappedItems);
+            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
 
             return mappedItems;
         }
@@ -50,7 +51,7 @@ namespace AuctionBLL.Services
         {
             var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Opened);
 
-            var mappedItems = MapLotsToViewModels(unmappedItems);
+            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
 
             return mappedItems;
         }
@@ -59,7 +60,7 @@ namespace AuctionBLL.Services
         {
             var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Closed);
 
-            var mappedItems = MapLotsToViewModels(unmappedItems);
+            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
 
             return mappedItems;
         }
@@ -70,7 +71,7 @@ namespace AuctionBLL.Services
             {
                 var unmappedItem = await _unitOfWork.LotsRepository.GetLotByIdAsync(id);
 
-                var mappedItem = MapLotToViewModel(unmappedItem);
+                var mappedItem = _mapper.Map<LotDto>(unmappedItem);
 
                 return mappedItem;
             }
@@ -99,7 +100,7 @@ namespace AuctionBLL.Services
 
             // TODO: sub to event when needs to open
 
-            var mapped = MapLotViewModelToLot(lot);
+            var mapped = _mapper.Map<Lot>(lot);
             mapped.Owner = owner;
             mapped.HighestPrice.Id = Guid.NewGuid();
             mapped.StartPrice.Id = Guid.NewGuid();
@@ -120,75 +121,85 @@ namespace AuctionBLL.Services
             return lot;
         }
 
-        public async Task<LotDto> AddParticipantAsync(LotDto lot, UserDto user)
+        public async Task<LotDto> AddParticipantAsync(Guid lotId, string userId)
         {
-            if (lot is null)
-                throw new ArgumentNullException(nameof(lot));
-            if (user is null)
-                throw new ArgumentNullException(nameof(user));
-            if (lot.Participants.Contains(user))
-                throw new InvalidOperationException("User already participant");
-            
-            lot.Participants.Add(user);
-            
-            var mapped = MapLotViewModelToLot(lot);
-
             try
             {
-                await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
-                
+                var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
+                var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if(lot.Participants is not null)
+                    if (lot.Participants.Contains(user))
+                        throw new InvalidOperationException("User is already a participant");
+
+                var participants = (lot.Participants ?? new List<User>()).ToList();
+                participants.Add(user);
+                lot.Participants = participants;
+
+                await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+
                 // TODO: _logger.AddNote or smth
+
+                var mapped = MapLotToViewModel(lot);
+
+                return mapped;
             }
             catch (ItemNotFoundException)
             {
                 throw;
             }
-
-            return lot;
         }
 
-        public async Task<LotDto> SetLotActualPriceAsync(LotDto lot, UserDto user, MoneyDto newPrice)
+        public async Task<LotDto> SetLotActualPriceAsync(Guid lotId, string userId, decimal newPrice)
         {
-            if (lot is null)
-                throw new ArgumentNullException(nameof(lot));
-            if (user is null)
-                throw new ArgumentNullException(nameof(user));
-            if (newPrice is null)
-                throw new ArgumentNullException(nameof(newPrice));
-            if (newPrice < lot.ActualPrice)
-                throw new InvalidOperationException("New price can not be lower than actual");
-            if (lot.Participants.Contains(user) == false)
-                throw new InvalidOperationException("User is not a participant of the lot");
+            if (userId is null)
+                throw new ArgumentNullException(nameof(userId));
 
-            lot.ActualPrice = newPrice;
-            
-            // TODO: _logger.AddNote or smth
-            
-            var mapped = MapLotViewModelToLot(lot);
-            
-            await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
+            try
+            {
+                var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
+                var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
 
-            return lot;
+                if (newPrice < lot.HighestPrice.Amount)
+                    throw new InvalidOperationException("New price can not be lower than actual");
+                if (lot.Participants.Contains(user) == false)
+                    throw new InvalidOperationException("User is not a participant of the lot");
+
+                lot.HighestPrice.Amount = newPrice;
+
+                // TODO: _logger.AddNote or smth
+
+
+                await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+
+                var mapped = MapLotToViewModel(lot);
+
+                return mapped;
+            }
+            catch (InvalidOperationException) // TODO: change for custom exception (ValidationException or smth)
+            {
+                throw;
+            }
         }
 
-        public async Task<LotDto> OpenLotAsync(LotDto lot)
+        public async Task<LotDto> OpenLotAsync(Guid lotId)
         {
-            if (lot is null)
-                throw new ArgumentNullException(nameof(lot));
-            if (lot.Status == LotStatus.Opened)
+            var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
+            
+            if (lot.Status == (int) LotStatus.Opened)
                 throw new InvalidOperationException("Lot is already opened");
 
-            lot.Status = LotStatus.Opened;
+            lot.Status = (int) LotStatus.Opened;
 
             // TODO: sub to event when needs to close
             
             // TODO: _logger.AddNote or smth
             
-            var mapped = MapLotViewModelToLot(lot);
+            await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+            
+            var mapped = MapLotToViewModel(lot);
 
-            await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
-
-            return lot;
+            return mapped;
         }
 
         public async Task<LotDto> CloseLotAsync(LotDto lot)

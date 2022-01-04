@@ -1,9 +1,8 @@
-﻿using AuctionDAL.Logs;
+﻿using System.Collections.Generic;
 using AuctionDAL.Models;
 using AuctionDAL.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System.Collections.Generic;
 
 namespace AuctionDAL.Migrations
 {
@@ -23,8 +22,8 @@ namespace AuctionDAL.Migrations
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             var lotsRepository = new LotsRepository(context);
 
-            roleManager.Create(new IdentityRole {Name = "user"});
-            roleManager.Create(new IdentityRole {Name = "admin"});
+            roleManager.Create(new IdentityRole { Name = "user" });
+            roleManager.Create(new IdentityRole { Name = "admin" });
 
             var user = new User
             {
@@ -32,7 +31,7 @@ namespace AuctionDAL.Migrations
                 UserName = "user",
                 FirstName = "First",
                 LastName = "User",
-                Wallet = new Wallet {Id = Guid.NewGuid()},
+                Wallet = new Wallet { Id = Guid.NewGuid() },
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
@@ -43,11 +42,11 @@ namespace AuctionDAL.Migrations
                 UserName = "admin",
                 FirstName = "First",
                 LastName = "Admin",
-                Wallet = new Wallet {Id = Guid.NewGuid()},
+                Wallet = new Wallet { Id = Guid.NewGuid() },
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
-            
+
             userManager.Create(user, "useruser");
             userManager.Create(admin, "adminadmin");
 
@@ -61,9 +60,9 @@ namespace AuctionDAL.Migrations
                 Name = "First lot",
                 Description = "Some description for the lot",
 
-                StartPrice = new Money {Id = Guid.NewGuid(), Amount = 1_000, Currency = 1},
-                HighestPrice = new Money {Id = Guid.NewGuid()},
-                MinStepPrice = new Money {Id = Guid.NewGuid(), Amount = 100, Currency = 1},
+                StartPrice = new Money { Id = Guid.NewGuid(), Amount = 1_000, Currency = 1 },
+                HighestPrice = new Money { Id = Guid.NewGuid() },
+                MinStepPrice = new Money { Id = Guid.NewGuid(), Amount = 100, Currency = 1 },
 
                 DateOfCreation = DateTime.Now,
                 StartDate = null,
@@ -72,9 +71,8 @@ namespace AuctionDAL.Migrations
                 TimeForStep = new TimeSpan(0, 10, 0),
 
                 Owner = user,
-                Buyer = null,
+                Acquirer = null,
                 Participants = new List<User>(),
-                Steps = new List<LotStepLog>()
             };
 
             lot.HighestPrice.Currency = lot.StartPrice.Currency;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AuctionDAL.Logs;
 using AuctionDAL.Models.Base;
 
 namespace AuctionDAL.Models
@@ -20,10 +19,12 @@ namespace AuctionDAL.Models
         public DateTime? EndDate { get; set; }
         public TimeSpan ProlongationTime { get; set; }
         public TimeSpan TimeForStep { get; set; }
-        
+
+        public string OwnerId { get; set; }
+        public string? AcquirerId { get; set; }
+
         public virtual User Owner { get; set; }
-        public virtual User? Buyer { get; set; }
-        public virtual IEnumerable<User> Participants { get; set; }
-        public virtual IEnumerable<LotStepLog> Steps { get; set; }
+        public virtual User? Acquirer { get; set; }
+        public virtual ICollection<User> Participants { get; set; }
     }
 }

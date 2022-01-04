@@ -1,4 +1,5 @@
-﻿@model AuctionWeb.ViewModels.Lots.DetailsModel
+﻿@using Microsoft.AspNet.Identity
+@model AuctionWeb.ViewModels.Lots.DetailsModel
 
 @{
     ViewBag.Title = "Details";
@@ -9,58 +10,101 @@
 <div>
     <h4>DetailsModel</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+    <div class="row">
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+        <div class="col-8">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
+            <div>
+                @Html.LabelFor(model => model.StartDate, "Start date:", new { @class = "form-label fw-bolder" })
+                @Html.DisplayFor(model => model.StartDate)
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
+            <div>
+                @Html.LabelFor(model => model.EndDate, "End date:", new { @class = "form-label fw-bolder" })
+                @if (Model.EndDate is null)
+                {
+                    <text>Missing</text>
+                }
+                else
+                {
+                    @Html.DisplayFor(model => model.EndDate)
+                }
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
+            <div>
+                @Html.LabelFor(model => model.ProlongationTime, "Prolongation time:", new { @class = "form-label fw-bolder" })
+                @Html.DisplayFor(model => model.ProlongationTime)
+            </div>
+            
+            <div>
+                @Html.LabelFor(model => model.TimeForStep, "Time for step:", new { @class = "form-label fw-bolder" })
+                @Html.DisplayFor(model => model.TimeForStep)
+            </div>
+            
+            <div>
+                @Html.LabelFor(model => model.ActualPrice, "Actual price:", new { @class = "form-label fw-bolder" })
+                @Html.DisplayFor(model => model.ActualPrice.Amount)
+                @Html.DisplayFor(model => model.ActualPrice.Currency.IsoName)
+            </div>
+            
+            @if (Model.Participants.Select(user => user.Id).Contains(User.Identity.GetUserId()) == false)
+            {
 
-        <dd>
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
+                using (Html.BeginForm("SetUserAsParticipant", "Lots", FormMethod.Post))
+                {
+                    <div class="">
+                        <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
+                    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                }
+                
+            }
+            else
+            {
+                using (Html.BeginForm("SetNewPrice", "Lots", FormMethod.Post))
+                {
 
-        <dd>
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
+                    var newPrice = 0m;
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ProlongationTime)
-        </dt>
+                    <div class="">
 
-        <dd>
-            @Html.DisplayFor(model => model.ProlongationTime)
-        </dd>
+                        <div class="">
+                            <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
+                        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.TimeForStep)
-        </dt>
+                        <div class="form-floating mb-3 col-md-6 offset-md-4">
+                            @Html.Editor(nameof(newPrice), new {htmlAttributes = new {@class = "form-control", @placeholder = "New price"}})
+                            @Html.Label(nameof(newPrice), htmlAttributes: new {@class = " "})
+                        </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.TimeForStep)
-        </dd>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                }
+            }
 
-    </dl>
+        </div>
+        
+        <div class="col-4">
+
+            <div class="">
+                @Html.LabelFor(model => model.Name, "Name:", new { @class = "form-label fw-bolder" })
+                @Html.DisplayFor(model => model.Name)
+            </div>
+
+            <div class="">
+                @Html.LabelFor(model => model.Description, "Description:", new { @class= "form-label fw-bolder" })
+                @Html.DisplayFor(model => model.Description)
+            </div>
+
+        </div>
+        
+    </div>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
