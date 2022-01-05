@@ -10,7 +10,7 @@ namespace AuctionBLL.Services
         void Add(TKey key, DateTime date);
         void AddRange(IEnumerable<(TKey, DateTime)> source);
         void Remove(TKey key);
-        void Prolong(TKey key, DateTime newDate);
+        void SetNewDate(TKey key, DateTime newDate);
         void Prolong(TKey key, TimeSpan span);
     }
 }

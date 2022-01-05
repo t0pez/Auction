@@ -23,9 +23,7 @@ namespace AuctionWeb.Controllers
             _lotsService = lotsService;
             _mapper = mapper;
         }
-
-
-        // GET: Lots
+        
         public async Task<ActionResult> Index()
         {
             var unmapped = await _lotsService.GetAllLotsAsync();
@@ -51,7 +49,6 @@ namespace AuctionWeb.Controllers
             }
         }
 
-        // GET: Lots/Create
         public ActionResult Create()
         {
             var currencies = Currency.List.Select(currency => new SelectListItem()
@@ -66,7 +63,6 @@ namespace AuctionWeb.Controllers
             return View();
         }
 
-        // POST: Lots/Create
         [Authorize(Roles = "user, admin")]
         [HttpPost]
         public async Task<ActionResult> Create(CreateModel model)
@@ -81,7 +77,7 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.CreateLotAsync(dto);
 
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             catch(Exception e)
             {
@@ -99,7 +95,7 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.SetLotActualPriceAsync(lotId, userId, newPrice);
 
-                return RedirectToAction("Details", new { id = lotId });
+                return RedirectToAction(nameof(Details), new { id = lotId });
             }
             catch(Exception e)
             {
@@ -117,7 +113,7 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.AddParticipantAsync(lotId, userId);
 
-                return RedirectToAction("Details", new { id = lotId });
+                return RedirectToAction(nameof(Details), new { id = lotId });
             }
             catch(Exception e)
             {
@@ -125,13 +121,11 @@ namespace AuctionWeb.Controllers
             }
         }
 
-        // GET: Lots/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Lots/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -146,27 +140,6 @@ namespace AuctionWeb.Controllers
                 return View();
             }
         }
-
-        // GET: Lots/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Lots/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        
     }
 }

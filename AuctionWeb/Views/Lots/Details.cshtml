@@ -7,20 +7,27 @@
 
 <h2>Details</h2>
 
+<p>
+    Owner id = @Model.Owner.Id
+    
+    Your id = @User.Identity.GetUserId()
+</p>
+
 <div>
-    <h4>DetailsModel</h4>
-    <hr />
+    
+    <hr/>
+    
     <div class="row">
 
         <div class="col-8">
 
             <div>
-                @Html.LabelFor(model => model.StartDate, "Start date:", new { @class = "form-label fw-bolder" })
+                @Html.LabelFor(model => model.StartDate, "Start date:", new {@class = "form-label fw-bolder"})
                 @Html.DisplayFor(model => model.StartDate)
             </div>
 
             <div>
-                @Html.LabelFor(model => model.EndDate, "End date:", new { @class = "form-label fw-bolder" })
+                @Html.LabelFor(model => model.EndDate, "End date:", new {@class = "form-label fw-bolder"})
                 @if (Model.EndDate is null)
                 {
                     <text>Missing</text>
@@ -32,21 +39,21 @@
             </div>
 
             <div>
-                @Html.LabelFor(model => model.ProlongationTime, "Prolongation time:", new { @class = "form-label fw-bolder" })
+                @Html.LabelFor(model => model.ProlongationTime, "Prolongation time:", new {@class = "form-label fw-bolder"})
                 @Html.DisplayFor(model => model.ProlongationTime)
             </div>
-            
+
             <div>
-                @Html.LabelFor(model => model.TimeForStep, "Time for step:", new { @class = "form-label fw-bolder" })
+                @Html.LabelFor(model => model.TimeForStep, "Time for step:", new {@class = "form-label fw-bolder"})
                 @Html.DisplayFor(model => model.TimeForStep)
             </div>
-            
+
             <div>
-                @Html.LabelFor(model => model.ActualPrice, "Actual price:", new { @class = "form-label fw-bolder" })
+                @Html.LabelFor(model => model.ActualPrice, "Actual price:", new {@class = "form-label fw-bolder"})
                 @Html.DisplayFor(model => model.ActualPrice.Amount)
                 @Html.DisplayFor(model => model.ActualPrice.Currency.IsoName)
             </div>
-            
+
             @{
                 var userId = User.Identity.GetUserId();
                 if (userId != Model.Owner.Id)
@@ -57,12 +64,12 @@
 
                         using (Html.BeginForm("SetUserAsParticipant", "Lots", FormMethod.Post))
                         {
-                            <div class="">
+                            <div class="d-none">
                                 <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
                             </div>
 
                             <div class="mb-3">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-primary">Set self as participant</button>
                             </div>
                         }
 
@@ -76,7 +83,7 @@
 
                             <div class="">
 
-                                <div class="">
+                                <div class="d-none">
                                     <input class="" id="lotId" name="lotId" value="@Model.Id" type="text">
                                 </div>
 
@@ -95,21 +102,21 @@
             }
 
         </div>
-        
+
         <div class="col-4">
 
             <div class="">
-                @Html.LabelFor(model => model.Name, "Name:", new { @class = "form-label fw-bolder" })
+                @Html.LabelFor(model => model.Name, "Name:", new {@class = "form-label fw-bolder"})
                 @Html.DisplayFor(model => model.Name)
             </div>
 
             <div class="">
-                @Html.LabelFor(model => model.Description, "Description:", new { @class= "form-label fw-bolder" })
+                @Html.LabelFor(model => model.Description, "Description:", new {@class = "form-label fw-bolder"})
                 @Html.DisplayFor(model => model.Description)
             </div>
 
         </div>
-        
+
     </div>
 </div>
 <p>

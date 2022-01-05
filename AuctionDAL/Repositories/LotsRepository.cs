@@ -46,8 +46,6 @@ namespace AuctionDAL.Repositories
                 throw new ItemAlreadyExistsException(nameof(lot));
 
             Lots.Add(lot);
-            
-            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateLotAsync(Lot updated)
@@ -55,8 +53,6 @@ namespace AuctionDAL.Repositories
             var item = await GetLotByIdAsync(updated.Id);
 
             _context.Entry(item).CurrentValues.SetValues(updated);
-            
-            await _context.SaveChangesAsync();
         }
     }
 }

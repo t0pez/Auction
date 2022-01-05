@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<AuctionWeb.ViewModels.Lots.ListModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Lots";
 }
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -16,6 +13,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ActualPrice)
         </th>
         <th></th>
     </tr>
@@ -25,13 +25,18 @@
         <td>
             @Html.DisplayFor(modelItem => item.Name)
         </td>
+        
         <td>
             @Html.DisplayFor(modelItem => item.Description)
         </td>
+        
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.DisplayFor(model => item.ActualPrice.Amount)
+            @Html.DisplayFor(model => item.ActualPrice.Currency.IsoName)
+        </td>
+        
+        <td>
+            @Html.ActionLink("Checkout", "Details", new { id=item.Id })
         </td>
     </tr>
 }

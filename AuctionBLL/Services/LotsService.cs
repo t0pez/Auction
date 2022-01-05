@@ -13,6 +13,7 @@ namespace AuctionBLL.Services
 {
     public class LotsService : ILotsService
     {
+        private readonly ITimeService<Guid> _timeService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -20,6 +21,7 @@ namespace AuctionBLL.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _timeService = new TimeService<Guid>();
         }
 
         private IEnumerable<LotDto> MapLotsToDto(IEnumerable<Lot> unmappedItems) =>
@@ -102,12 +104,7 @@ namespace AuctionBLL.Services
 
             var mapped = _mapper.Map<Lot>(lot);
             mapped.Owner = owner;
-            mapped.HighestPrice.Id = Guid.NewGuid();
-            mapped.StartPrice.Id = Guid.NewGuid();
-            mapped.MinStepPrice.Id = Guid.NewGuid();
-            mapped.HighestPrice.Currency = mapped.StartPrice.Currency;
-            mapped.HighestPrice.Amount = mapped.StartPrice.Amount;
-
+            
             try
             {
                 await _unitOfWork.LotsRepository.CreateLotAsync(mapped);
@@ -118,6 +115,19 @@ namespace AuctionBLL.Services
                 throw;
             }
 
+            if (lot.StartDate != null) 
+                _timeService.Add(lot.Id, (DateTime) lot.StartDate);
+
+            _timeService.TimeToInvoke += async guid => // TODO: Change for method that changes lot status
+            {
+                var updated = await _unitOfWork.LotsRepository.GetLotByIdAsync(guid);
+
+                updated.Name = "Time service working ok???!!!!";
+
+                await _unitOfWork.LotsRepository.UpdateLotAsync(updated);
+                await _unitOfWork.SaveChangesAsync();
+            };
+            
             return lot;
         }
 
@@ -128,9 +138,10 @@ namespace AuctionBLL.Services
                 var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
                 var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
 
-                //if(lot.Participants is not null)
-                    if (lot.Participants.Contains(user))
-                        throw new InvalidOperationException("User is already a participant");
+                if (lot.Status is (int) LotStatus.Closed or (int) LotStatus.Cancelled)
+                    throw new InvalidOperationException("Can not add participant to closed or cancelled lot");
+                if (lot.Participants.Contains(user))
+                    throw new InvalidOperationException("User is already a participant");
 
                 lot.Participants.Add(user);
                 user.LotsAsParticipant.Add(lot);
@@ -154,14 +165,13 @@ namespace AuctionBLL.Services
 
         public async Task<LotDto> SetLotActualPriceAsync(Guid lotId, string userId, decimal newPrice)
         {
-            if (userId is null)
-                throw new ArgumentNullException(nameof(userId));
-
             try
             {
                 var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
                 var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
 
+                // TODO: work with user wallet
+                
                 if (newPrice < lot.HighestPrice.Amount)
                     throw new InvalidOperationException("New price can not be lower than actual");
                 if (lot.Participants.Contains(user) == false)
@@ -169,14 +179,17 @@ namespace AuctionBLL.Services
 
                 lot.HighestPrice.Amount = newPrice;
 
-                // TODO: _logger.AddNote or smth
-
-
                 await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
-
+                await _unitOfWork.SaveChangesAsync();
+                
                 var mapped = MapLotToViewModel(lot);
 
                 return mapped;
+            }
+            catch (ItemNotFoundException)
+            {
+                // TODO: Custom Exception
+                throw;
             }
             catch (InvalidOperationException) // TODO: change for custom exception (ValidationException or smth)
             {
@@ -186,18 +199,26 @@ namespace AuctionBLL.Services
 
         public async Task<LotDto> OpenLotAsync(Guid lotId)
         {
-            var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
-            
+            Lot lot;
+            try
+            {
+                lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
+            }
+            catch (ItemNotFoundException)
+            {
+                // TODO: Custom Exception
+                throw;
+            }
+
             if (lot.Status == (int) LotStatus.Opened)
                 throw new InvalidOperationException("Lot is already opened");
 
             lot.Status = (int) LotStatus.Opened;
 
             // TODO: sub to event when needs to close
-            
-            // TODO: _logger.AddNote or smth
-            
+
             await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+            await _unitOfWork.SaveChangesAsync();
             
             var mapped = MapLotToViewModel(lot);
 
@@ -218,7 +239,8 @@ namespace AuctionBLL.Services
             var mapped = MapLotViewModelToLot(lot);
 
             await _unitOfWork.LotsRepository.UpdateLotAsync(mapped);
-
+            await _unitOfWork.SaveChangesAsync();
+            
             return lot;
         }
 

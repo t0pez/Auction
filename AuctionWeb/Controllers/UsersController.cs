@@ -92,7 +92,15 @@ namespace AuctionWeb.Controllers
             }, claim);
                 
             return RedirectToAction("Index", "Home");
-
+        }
+        
+        [HttpGet]
+        public ActionResult LogOut()
+        {
+            var authManager = HttpContext.GetOwinContext().Authentication;
+            authManager.SignOut();
+            
+            return RedirectToAction("Index", "Home");
         }
 
     }
