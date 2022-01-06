@@ -1,28 +1,36 @@
-﻿using System;
+﻿using AuctionBLL.Dto;
+using AuctionBLL.Services;
+using AuctionWeb.ViewModels.Users;
+using AutoMapper;
+using Microsoft.Owin.Security;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using AuctionBLL.Dto;
-using AuctionBLL.Services;
-using AuctionWeb.ViewModels.Users;
-using Microsoft.Owin.Security;
 
 namespace AuctionWeb.Controllers
 {
     public class UsersController : Controller
     {
         private readonly IUsersService _usersService;
+        private readonly IMapper _mapper;
+        
 
-        public UsersController(IUsersService usersService)
+        public UsersController(IUsersService usersService, IMapper mapper)
         {
             _usersService = usersService;
+            _mapper = mapper;
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Index()
         {
+            var unmapped = await _usersService.GetAllAsync();
 
-            return View();
+            var mapped = _mapper.Map<IEnumerable<UserListModel>>(unmapped);
+
+            return View(mapped);
         }
 
         public ActionResult Create()

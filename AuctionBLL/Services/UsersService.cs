@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AuctionBLL.Dto;
 using AuctionDAL;
 using AuctionDAL.Models;
-using AuctionDAL.Repositories;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
 
@@ -18,17 +17,17 @@ namespace AuctionBLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsersService(IUnitOfWork unitOfWork)
+        public UsersService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _mapper = null;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
             var unmapped = await _unitOfWork.UserManager.Users.ToListAsync();
 
-            var mapped = _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(unmapped);
+            var mapped = _mapper.Map<IEnumerable<UserDto>>(unmapped);
 
             return mapped;
         }
@@ -56,7 +55,7 @@ namespace AuctionBLL.Services
             if (operationResult.Errors.Any())
                 throw new InvalidOperationException("Smth has go wrong");
 
-            await _unitOfWork.UserManager.AddToRoleAsync(user.Id, "user");
+            await _unitOfWork.UserManager.AddToRoleAsync(user.Id, newUser.Role);
             await _unitOfWork.SaveChangesAsync();
         }
 

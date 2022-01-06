@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AuctionBLL.Dto;
 using AuctionBLL.Enums;
 using AuctionDAL.Models;
@@ -8,7 +9,6 @@ namespace AuctionBLL.Infrastructure
 {
     public class BusinessLayerAutoMapperProfile : Profile
     {
-        // TODO: ? IdToEntityConverter
         public BusinessLayerAutoMapperProfile()
         {
             CreateMap<Currency, int>().ConvertUsing(currency => currency.Value);
@@ -25,7 +25,9 @@ namespace AuctionBLL.Infrastructure
             CreateMap<WalletDto, Wallet>().ReverseMap();
 
 
-            CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<UserDto, User>();
+
+            CreateMap<User, UserDto>();
 
             CreateMap<LotDto, Lot>()
                 .ForMember(lot => lot.HighestPrice,

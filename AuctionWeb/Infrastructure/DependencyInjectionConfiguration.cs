@@ -1,7 +1,6 @@
-﻿using AuctionBLL.Infrastructure;
-using AuctionBLL.Services;
-using AutoMapper;
+﻿using AuctionBLL.Services;
 using Ninject.Modules;
+using System.Web.Mvc;
 
 namespace AuctionWeb.Infrastructure
 {
@@ -11,16 +10,7 @@ namespace AuctionWeb.Infrastructure
         {
             Bind<IUsersService>().To<UsersService>();
             Bind<ILotsService>().To<LotsService>();
-
-
-            var mapper = new MapperConfiguration(expression =>
-            {
-                expression.AddProfile<BusinessLayerAutoMapperProfile>();
-                expression.AddProfile<PresentationLayerAutoMapperProfile>();
-            }).CreateMapper();
-
-            Bind<IMapper>().ToConstant(mapper);
-
+            Unbind<ModelValidatorProvider>();
         }
     }
 }

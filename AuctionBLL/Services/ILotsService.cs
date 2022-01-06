@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AuctionBLL.Dto;
-using AuctionDAL.Models;
 
 namespace AuctionBLL.Services
 {

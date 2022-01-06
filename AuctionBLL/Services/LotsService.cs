@@ -108,6 +108,7 @@ namespace AuctionBLL.Services
             try
             {
                 await _unitOfWork.LotsRepository.CreateLotAsync(mapped);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (ItemAlreadyExistsException)
             {

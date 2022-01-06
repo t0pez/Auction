@@ -2,6 +2,7 @@
 using AuctionWeb.ViewModels.Lots;
 using AutoMapper;
 using System;
+using AuctionWeb.ViewModels.Users;
 
 namespace AuctionWeb.Infrastructure
 {
@@ -9,8 +10,6 @@ namespace AuctionWeb.Infrastructure
     {
         public PresentationLayerAutoMapperProfile()
         {
-            // TODO: change map: wrong mapping currency
-
             CreateMap<LotDto, DetailsModel>();
             
             CreateMap<CreateModel, LotDto>()
@@ -26,6 +25,8 @@ namespace AuctionWeb.Infrastructure
                         new MoneyDto(model.MinStepPrice, Convert.ToInt32(model.Currency))));
 
             CreateMap<LotDto, ListModel>();
+
+            CreateMap<UserDto, UserListModel>();
         }
     }
 }

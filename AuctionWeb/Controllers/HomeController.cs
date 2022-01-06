@@ -1,8 +1,4 @@
-﻿using System;
-using System.Web.Mvc;
-using AuctionBLL.Dto;
-using AuctionBLL.Enums;
-using AuctionDAL.Models;
+﻿using System.Web.Mvc;
 using AutoMapper;
 
 namespace AuctionWeb.Controllers

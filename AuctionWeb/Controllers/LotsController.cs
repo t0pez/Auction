@@ -49,6 +49,7 @@ namespace AuctionWeb.Controllers
             }
         }
 
+        [Authorize(Roles = "user, admin")]
         public ActionResult Create()
         {
             var currencies = Currency.List.Select(currency => new SelectListItem()
