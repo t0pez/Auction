@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AuctionBLL.Dto;
 using AuctionDAL;
+using AuctionDAL.Extensions.Models;
 using AuctionDAL.Models;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
@@ -122,6 +123,30 @@ namespace AuctionBLL.Services
 
             await _unitOfWork.UserManager.RemoveFromRoleAsync(userId, role);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<UserDto> TopUpUserBalanceAsync(string userId, Guid moneyId, decimal addedAmount)
+        {
+            if (addedAmount < 0)
+                throw new InvalidOperationException();
+
+            try
+            {
+                var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+                
+                var userMoneyAmount = user.GetMoneyById(moneyId);
+                userMoneyAmount.Amount += addedAmount;
+
+                await _unitOfWork.UserManager.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                var mapped = _mapper.Map<UserDto>(user);
+                return mapped;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public Task UpdateAsync(UserDto updated)

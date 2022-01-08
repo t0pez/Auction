@@ -9,7 +9,7 @@
 
 <div>
     <hr/>
-    <dl class="row">
+    <div class="row">
 
         <div class="col-6">
             <div>
@@ -58,7 +58,7 @@
                         <label class="col-md-6 align-self-center">@money.Amount @money.Currency.IsoName</label>
                         @if (User.Identity.GetUserId() == Model.Id)
                         {
-                            @Html.ActionLink("Top up", "Details", "Lots", new {id = money.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                            @Html.ActionLink("Top up", "TopUpUserBalance", "Users", new {moneyId = money.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
                         }
                         <hr class="mt-2"/>
                     </dd>
@@ -82,7 +82,7 @@
         @if (Model.OwnedLots.Any() == false)
         {
             <dd>
-                @Html.Raw("No owned lots")
+                @Html.Raw("No lots")
             </dd>
         }
         else
@@ -104,7 +104,7 @@
         @if (Model.AsParticipant.Any() == false)
         {
             <dd>
-                @Html.Raw("No owned lots")
+                @Html.Raw("No lots")
             </dd>
         }
         else
@@ -126,7 +126,7 @@
         @if (Model.AcquiredLots.Any() == false)
         {
             <dd>
-                @Html.Raw("No owned lots")
+                @Html.Raw("No lots")
             </dd>
         }
         else
@@ -142,7 +142,7 @@
         }
 
 
-    </dl>
+    </div>
 </div>
 <p>
     @if (User.IsInRole("admin") && User.Identity.GetUserId() != Model.Id)

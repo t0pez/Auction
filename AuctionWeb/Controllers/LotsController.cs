@@ -1,14 +1,14 @@
-﻿using System;
+﻿using AuctionBLL.Dto;
+using AuctionBLL.Services;
+using AuctionWeb.ViewModels.Lots;
+using AutoMapper;
+using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using AuctionBLL.Dto;
-using AuctionBLL.Services;
-using AuctionWeb.ViewModels.Lots;
-using AutoMapper;
-using Microsoft.AspNet.Identity;
 
 namespace AuctionWeb.Controllers
 {
@@ -28,7 +28,7 @@ namespace AuctionWeb.Controllers
         {
             var unmapped = await _lotsService.GetAllLotsAsync();
 
-            var mapped = _mapper.Map<IEnumerable<LotListViewModel>>(unmapped); // TODO: change view to new view viewModel
+            var mapped = _mapper.Map<IEnumerable<LotListViewModel>>(unmapped).OrderBy(model => model.Status); 
             
             return View(mapped);
         }
@@ -82,7 +82,8 @@ namespace AuctionWeb.Controllers
             }
             catch(Exception e)
             {
-                return View("Error");
+
+                return View(nameof(Create), viewModel);
             }
         }
 

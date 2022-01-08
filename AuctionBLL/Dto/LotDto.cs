@@ -22,7 +22,7 @@ namespace AuctionBLL.Dto
         public TimeSpan ProlongationTime { get; set; }
         
         public UserDto Owner { get; set; }
-        public UserDto? Buyer { get; set; }
+        public UserDto? Acquirer { get; set; }
         public List<UserDto> Participants { get; set; }
         public List<LotStepLogDto> Steps { get; set; }
     }

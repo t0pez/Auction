@@ -13,13 +13,14 @@ namespace AuctionBLL.Infrastructure
         {
             CreateMap<Currency, int>().ConvertUsing(currency => currency.Value);
             
-            CreateMap<Money, MoneyDto>().ConstructUsing(money => new MoneyDto(money.Amount, money.Currency));
+            CreateMap<Money, MoneyDto>()
+                .ConstructUsing(money => new MoneyDto(money.Amount, money.Currency))
+                .ForMember(dto => dto.Id,
+                    expression => expression.MapFrom(money => money.Id));
 
             CreateMap<MoneyDto, Money>()
                 .ForMember(money => money.Currency,
-                    expression => expression.MapFrom(dto => dto.Currency))
-                .ForMember(money => money.Id,
-                    expression => expression.MapFrom(dto => Guid.NewGuid()));
+                    expression => expression.MapFrom(dto => dto.Currency));
 
 
             CreateMap<WalletDto, Wallet>().ReverseMap();
@@ -33,7 +34,7 @@ namespace AuctionBLL.Infrastructure
                 .ForMember(lot => lot.Owner,
                     expression => expression.MapFrom(dto => dto.Owner))
                 .ForMember(lot => lot.Acquirer,
-                    expression => expression.MapFrom(dto => dto.Buyer))
+                    expression => expression.MapFrom(dto => dto.Acquirer))
                 .ForMember(lot => lot.Status,
                     expression => expression.MapFrom(dto => (int) dto.Status));
             
@@ -42,7 +43,7 @@ namespace AuctionBLL.Infrastructure
                     expression => expression.MapFrom(lot => lot.HighestPrice))
                 .ForMember(dto => dto.Owner,
                     expression => expression.MapFrom(lot => lot.Owner))
-                .ForMember(dto => dto.Buyer,
+                .ForMember(dto => dto.Acquirer,
                     expression => expression.MapFrom(lot => lot.Acquirer))
                 .ForMember(dto => dto.Status,
                     expression => expression.MapFrom(lot => (LotStatus) lot.Status));

@@ -4,7 +4,7 @@
     ViewBag.Title = "Lots";
 }
 
-<h2>Index</h2>
+<h2 class="mt-3">Lots</h2>
 
 <table class="table">
     <tr>
@@ -16,6 +16,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ActualPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
         </th>
         <th></th>
     </tr>
@@ -33,6 +36,10 @@
         <td>
             @Html.DisplayFor(model => item.ActualPrice.Amount)
             @Html.DisplayFor(model => item.ActualPrice.Currency.IsoName)
+        </td>
+        
+        <td>
+            @Html.DisplayFor(model => item.Status)
         </td>
         
         <td>

@@ -2,6 +2,7 @@
 using AuctionWeb.ViewModels.Lots;
 using AutoMapper;
 using System;
+using AuctionWeb.ViewModels.Money;
 using AuctionWeb.ViewModels.Users;
 
 namespace AuctionWeb.Infrastructure

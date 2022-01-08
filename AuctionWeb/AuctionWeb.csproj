@@ -196,8 +196,9 @@
     <Compile Include="ViewModels\Lots\LotCreateViewModel.cs" />
     <Compile Include="ViewModels\Lots\LotDetailsViewModel.cs" />
     <Compile Include="ViewModels\Lots\LotListViewModel.cs" />
+    <Compile Include="ViewModels\Money\MoneyTopUpViewModel.cs" />
     <Compile Include="ViewModels\Users\LoginInfoModel.cs" />
-    <Compile Include="ViewModels\Users\MoneyCreateViewModel.cs" />
+    <Compile Include="ViewModels\Money\MoneyCreateViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
     <Compile Include="ViewModels\Users\UserDetailsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserListModel.cs" />
@@ -288,6 +289,7 @@
     <Content Include="Views\Lots\Details.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
+    <Content Include="Views\Users\TopUpUserBalance.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

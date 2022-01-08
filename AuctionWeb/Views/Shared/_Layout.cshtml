@@ -32,7 +32,7 @@
 
                     <ul class="dropdown-menu">
                         <li>
-                            @Html.ActionLink("View opened lots", "Index", "Lots", new { area = "" }, new { @class = "dropdown-item" })
+                            @Html.ActionLink("View lots", "Index", "Lots", new { area = "" }, new { @class = "dropdown-item" })
                         </li>
                         <li>
                             @Html.ActionLink("Create lot", "Create", "Lots", new { area = "" }, new { @class = "dropdown-item" })
@@ -49,16 +49,16 @@
 
             </ul>
 
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav position-relative">
 
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">
                             @User.Identity.Name
                         </a>
 
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu position-absolute top-100 start-0">
                             <li>
                                 @Html.ActionLink("Account", "Details", "Users", new {userId=User.Identity.GetUserId()}, new {@class = "dropdown-item"})
                             </li>

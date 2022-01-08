@@ -16,6 +16,7 @@ namespace AuctionBLL.Services
         Task<ClaimsIdentity> LoginAsync(UserDto user);
         Task AddRoleAsync(string userId, string role);
         Task RemoveRoleAsync(string userId, string role);
+        Task<UserDto> TopUpUserBalanceAsync(string userId, Guid moneyId, decimal addedAmount);
         Task UpdateAsync(UserDto updated);
     }
 }

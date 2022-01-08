@@ -24,6 +24,7 @@ namespace AuctionWeb.ViewModels.Lots
         public TimeSpan TimeForStep { get; set; }
 
         public UserDto Owner { get; set; }
+        public UserDto Acquirer { get; set; }
         public IEnumerable<UserDto> Participants { get; set; }
     }
 }
