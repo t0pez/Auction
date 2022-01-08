@@ -14,6 +14,7 @@ namespace AuctionDAL.Context
         public DbSet<Lot> Lots { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Money> Money { get; set; }
+        public DbSet<News> News { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -9,8 +9,9 @@ namespace AuctionBLL.Dto
         public decimal Amount { get; set; }
         public readonly Currency Currency;
 
-        public MoneyDto(decimal amount, Currency currency)
+        public MoneyDto(Guid id, decimal amount, Currency currency)
         {
+            Id = id;
             Amount = amount;
             Currency = currency;
         }

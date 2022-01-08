@@ -12,11 +12,9 @@ namespace AuctionBLL.Infrastructure
         public BusinessLayerAutoMapperProfile()
         {
             CreateMap<Currency, int>().ConvertUsing(currency => currency.Value);
-            
-            CreateMap<Money, MoneyDto>()
-                .ConstructUsing(money => new MoneyDto(money.Amount, money.Currency))
-                .ForMember(dto => dto.Id,
-                    expression => expression.MapFrom(money => money.Id));
+            CreateMap<int, Currency>().ConvertUsing(i => Currency.FromValue(i));
+
+            CreateMap<Money, MoneyDto>();
 
             CreateMap<MoneyDto, Money>()
                 .ForMember(money => money.Currency,

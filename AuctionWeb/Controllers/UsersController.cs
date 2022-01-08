@@ -169,7 +169,9 @@ namespace AuctionWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateUserWallet(string userId, MoneyCreateViewModel money)
         {
+            
             var mapped = _mapper.Map<MoneyDto>(money);
+            mapped.Id = Guid.NewGuid();
 
             await _usersService.CreateUserMoneyAsync(userId, mapped);
 
