@@ -14,16 +14,12 @@ namespace AuctionDAL.Context.Configuration
             Property(lot => lot.Status).IsRequired();
             Property(lot => lot.DateOfCreation).IsRequired();
             Property(lot => lot.ProlongationTime).IsRequired();
-            Property(lot => lot.TimeForStep).IsRequired();
 
             HasRequired(lot => lot.Owner)
                 .WithMany(user => user.OwnedLots)
-                .HasForeignKey(lot => lot.OwnerId);
-
-            //HasOptional(lot => lot.Acquirer)
-            //    .WithMany(user => user.AcquiredLots)
-            //    .HasForeignKey(lot => lot.AcquirerId);
-
+                .HasForeignKey(lot => lot.OwnerId)
+                .WillCascadeOnDelete(false);
+            
             HasMany(lot => lot.Participants)
                 .WithMany(user => user.LotsAsParticipant);
         }

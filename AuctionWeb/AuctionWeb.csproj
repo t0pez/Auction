@@ -193,11 +193,13 @@
     <Compile Include="Infrastructure\DependencyInjectionConfiguration.cs" />
     <Compile Include="Infrastructure\PresentationLayerAutoMapperProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\Lots\CreateModel.cs" />
-    <Compile Include="ViewModels\Lots\DetailsModel.cs" />
-    <Compile Include="ViewModels\Lots\ListModel.cs" />
+    <Compile Include="ViewModels\Lots\LotCreateViewModel.cs" />
+    <Compile Include="ViewModels\Lots\LotDetailsViewModel.cs" />
+    <Compile Include="ViewModels\Lots\LotListViewModel.cs" />
     <Compile Include="ViewModels\Users\LoginInfoModel.cs" />
-    <Compile Include="ViewModels\Users\RegisterModel.cs" />
+    <Compile Include="ViewModels\Users\MoneyCreateViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserDetailsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserListModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +265,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Views\Users\CreateUserWallet.cshtml" />
     <Content Include="Views\Users\tsconfig.json" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -284,6 +287,7 @@
     <Content Include="Views\Lots\Index.cshtml" />
     <Content Include="Views\Lots\Details.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Users\Details.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

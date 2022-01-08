@@ -1,4 +1,4 @@
-﻿@model AuctionWeb.ViewModels.Users.RegisterModel
+﻿@model AuctionWeb.ViewModels.Users.UserCreateViewModel
 
 @{
     ViewBag.Title = "Create";
@@ -9,11 +9,10 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
     @section Scripts {@Scripts.Render("~/bundles/jqueryval")}
 
     <div class="">
-        <h4>RegisterModel</h4>
+        <h4>UserCreateViewModel</h4>
         <hr/>
         @Html.ValidationSummary(true, "", new {@class = "text-danger"})
         

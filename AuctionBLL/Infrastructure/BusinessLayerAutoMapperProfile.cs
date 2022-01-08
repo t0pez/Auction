@@ -25,9 +25,7 @@ namespace AuctionBLL.Infrastructure
             CreateMap<WalletDto, Wallet>().ReverseMap();
 
 
-            CreateMap<UserDto, User>();
-
-            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>().ReverseMap();
 
             CreateMap<LotDto, Lot>()
                 .ForMember(lot => lot.HighestPrice,

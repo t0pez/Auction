@@ -5,6 +5,7 @@ namespace AuctionBLL.Dto
 {
     public sealed class MoneyDto
     {
+        public Guid Id { get; set; }
         public decimal Amount { get; private set; }
         public readonly Currency Currency;
 

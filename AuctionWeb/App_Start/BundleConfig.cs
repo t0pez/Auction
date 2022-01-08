@@ -21,8 +21,7 @@ namespace AuctionWeb
 
             bundles.Add(new Bundle("~/bundles/bootstrap")
                 .Include("~/Scripts/bootstrap.js")
-                .Include("~/Scripts/bootstrap.bundl.js")
-                .Include("~/Scripts/bootstrap.bundl.min.js"));
+                .Include("~/Scripts/bootstrap.bundl.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                 "~/Content/bootstrap.css",

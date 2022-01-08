@@ -10,9 +10,9 @@ namespace AuctionWeb.Infrastructure
     {
         public PresentationLayerAutoMapperProfile()
         {
-            CreateMap<LotDto, DetailsModel>();
+            CreateMap<LotDto, LotDetailsViewModel>();
             
-            CreateMap<CreateModel, LotDto>()
+            CreateMap<LotCreateViewModel, LotDto>()
                 .ForMember(dto => dto.StartDate,
                     expression => expression.MapFrom(model =>
                         new DateTime(model.StartDate.Ticks)
@@ -24,9 +24,15 @@ namespace AuctionWeb.Infrastructure
                     expression => expression.MapFrom(model => 
                         new MoneyDto(model.MinStepPrice, Convert.ToInt32(model.Currency))));
 
-            CreateMap<LotDto, ListModel>();
+            CreateMap<LotDto, LotListViewModel>();
+
+            CreateMap<UserCreateViewModel, UserDto>();
 
             CreateMap<UserDto, UserListModel>();
+
+            CreateMap<UserDto, UserDetailsViewModel>();
+
+            CreateMap<MoneyCreateViewModel, MoneyDto>();
         }
     }
 }

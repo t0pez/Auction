@@ -20,7 +20,6 @@ namespace AuctionBLL.Dto
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public TimeSpan ProlongationTime { get; set; }
-        public TimeSpan TimeForStep { get; set; }
         
         public UserDto Owner { get; set; }
         public UserDto? Buyer { get; set; }

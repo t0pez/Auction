@@ -28,7 +28,7 @@ namespace AuctionWeb.Controllers
         {
             var unmapped = await _lotsService.GetAllLotsAsync();
 
-            var mapped = _mapper.Map<IEnumerable<ListModel>>(unmapped); // TODO: change view to new view model
+            var mapped = _mapper.Map<IEnumerable<LotListViewModel>>(unmapped); // TODO: change view to new view viewModel
             
             return View(mapped);
         }
@@ -39,7 +39,7 @@ namespace AuctionWeb.Controllers
             {
                 var unmapped = await _lotsService.GetLotByIdAsync(id);
 
-                var mapped = _mapper.Map<DetailsModel>(unmapped);
+                var mapped = _mapper.Map<LotDetailsViewModel>(unmapped);
 
                 return View(mapped);
             }
@@ -66,11 +66,11 @@ namespace AuctionWeb.Controllers
 
         [Authorize(Roles = "user, admin")]
         [HttpPost]
-        public async Task<ActionResult> Create(CreateModel model)
+        public async Task<ActionResult> Create(LotCreateViewModel viewModel)
         {
             try
             {
-                var dto = _mapper.Map<LotDto>(model);
+                var dto = _mapper.Map<LotDto>(viewModel);
                 dto.Owner = new UserDto()
                 {
                     Id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId()

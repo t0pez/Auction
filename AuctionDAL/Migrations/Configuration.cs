@@ -53,33 +53,6 @@ namespace AuctionDAL.Migrations
             userManager.AddToRole(user.Id, "user");
             userManager.AddToRole(admin.Id, "admin");
 
-            var lot = new Lot
-            {
-                Id = Guid.NewGuid(),
-                Status = 0,
-                Name = "First lot",
-                Description = "Some description for the lot",
-
-                StartPrice = new Money { Id = Guid.NewGuid(), Amount = 1_000, Currency = 1 },
-                HighestPrice = new Money { Id = Guid.NewGuid() },
-                MinStepPrice = new Money { Id = Guid.NewGuid(), Amount = 100, Currency = 1 },
-
-                DateOfCreation = DateTime.Now,
-                StartDate = null,
-                EndDate = null,
-                ProlongationTime = new TimeSpan(0, 10, 0),
-                TimeForStep = new TimeSpan(0, 10, 0),
-
-                Owner = user,
-                Acquirer = null,
-                Participants = new List<User>(),
-            };
-
-            lot.HighestPrice.Currency = lot.StartPrice.Currency;
-            lot.HighestPrice.Amount = lot.StartPrice.Amount;
-
-            await lotsRepository.CreateLotAsync(lot);
-
             await context.SaveChangesAsync();
         }
     }

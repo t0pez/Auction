@@ -1,0 +1,178 @@
+﻿@using Microsoft.AspNet.Identity
+@model AuctionWeb.ViewModels.Users.UserDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2 class="mt-3">Details</h2>
+
+<div>
+    <hr/>
+    <dl class="row">
+
+        <div class="col-6">
+            <div>
+                @Html.LabelFor(model => model.FirstName, "First name:", new {@class = "form-label fw-bolder"})
+                @Html.DisplayFor(model => model.FirstName)
+            </div>
+
+            <div>
+                @Html.LabelFor(model => model.LastName, "Last name:", new {@class = "form-label fw-bolder"})
+                @Html.DisplayFor(model => model.LastName)
+            </div>
+
+            <div>
+                @Html.LabelFor(model => model.UserName, "User name:", new {@class = "form-label fw-bolder"})
+                @Html.DisplayFor(model => model.UserName)
+            </div>
+
+            @if (User.IsInRole("admin"))
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Role)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Role)
+                </dd>
+            }
+        </div>
+
+        <div class="col-6">
+            <dt>
+                @Html.DisplayNameFor(model => model.Wallet)
+            </dt>
+
+            @if (Model.Wallet.Money.Any() == false)
+            {
+                <dd>
+                    @Html.Raw("No wallets")
+                </dd>
+            }
+            else
+            {
+                foreach (var money in Model.Wallet.Money)
+                {
+                    <dd class="row mb-3">
+                        <label class="col-md-6 align-self-center">@money.Amount @money.Currency.IsoName</label>
+                        @if (User.Identity.GetUserId() == Model.Id)
+                        {
+                            @Html.ActionLink("Top up", "Details", "Lots", new {id = money.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                        }
+                        <hr class="mt-2"/>
+                    </dd>
+                }
+            }
+            
+            @if (User.Identity.GetUserId() == Model.Id)
+            {
+                @Html.ActionLink("Create wallet", "CreateUserWallet", "Users", new {area = ""}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+            }
+
+
+        </div>
+
+        <hr class="my-3"/>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwnedLots)
+        </dt>
+
+        @if (Model.OwnedLots.Any() == false)
+        {
+            <dd>
+                @Html.Raw("No owned lots")
+            </dd>
+        }
+        else
+        {
+            foreach (var lot in Model.OwnedLots)
+            {
+                <dd class="row mb-3">
+                    <label class="col-md-6 align-self-center">@lot.Name</label>
+                    @Html.ActionLink("View details", "Details", "Lots", new {id = lot.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                </dd>
+                <hr class="mt-2"/>
+            }
+        }
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AsParticipant)
+        </dt>
+
+        @if (Model.AsParticipant.Any() == false)
+        {
+            <dd>
+                @Html.Raw("No owned lots")
+            </dd>
+        }
+        else
+        {
+            foreach (var lot in Model.AsParticipant)
+            {
+                <dd class="row mb-3">
+                    <label class="col-md-6 align-self-center">@lot.Name</label>
+                    @Html.ActionLink("View details", "Details", "Lots", new {id = lot.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                    <hr class="mt-2"/>
+                </dd>
+            }
+        }
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AcquiredLots)
+        </dt>
+
+        @if (Model.AcquiredLots.Any() == false)
+        {
+            <dd>
+                @Html.Raw("No owned lots")
+            </dd>
+        }
+        else
+        {
+            foreach (var lot in Model.AcquiredLots)
+            {
+                <dd class="row mb-3">
+                    <label class="col-md-6 align-self-center">@lot.Name</label>
+                    @Html.ActionLink("View details", "Details", "Lots", new {id = lot.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                    <hr class="mt-2"/>
+                </dd>
+            }
+        }
+
+
+    </dl>
+</div>
+<p>
+    @if (User.IsInRole("admin") && User.Identity.GetUserId() != Model.Id)
+    {
+        if (Model.Role.Contains("admin"))
+        {
+            using (Html.BeginForm("RemoveUserFromAdminRole", "Users", FormMethod.Post))
+            {
+                <div class="d-none">
+                    <input class="" id="userId" name="userId" value="@Model.Id" type="text">
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Remove from admins</button>
+                </div>
+            }
+        }
+        else
+        {
+            using (Html.BeginForm("AddUserToAdminRole", "Users", FormMethod.Post))
+            {
+                <div class="d-none">
+                    <input class="" id="userId" name="userId" value="@Model.Id" type="text">
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Promote to admin</button>
+                </div>
+            }
+        }
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>

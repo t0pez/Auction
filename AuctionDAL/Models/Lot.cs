@@ -15,10 +15,9 @@ namespace AuctionDAL.Models
         public virtual Money MinStepPrice { get; set; }
         
         public DateTime DateOfCreation { get; set; }
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public TimeSpan ProlongationTime { get; set; }
-        public TimeSpan TimeForStep { get; set; }
 
         public string OwnerId { get; set; }
         public string? AcquirerId { get; set; }

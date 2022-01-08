@@ -31,7 +31,24 @@ namespace AuctionBLL.Services
 
             return mapped;
         }
-        
+
+        public async Task<UserDto> GetByUserIdAsync(string userId)
+        {
+            var unmapped = await _unitOfWork.UserManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
+
+            if (unmapped is null)
+                throw new InvalidOperationException("User not found");
+
+            var mapped = _mapper.Map<UserDto>(unmapped);
+
+            return mapped;
+        }
+
+        public async Task<IEnumerable<string>> GetUserRolesAsync(string userId)
+        {
+            return await _unitOfWork.UserManager.GetRolesAsync(userId);
+        }
+
         public async Task CreateAsync(UserDto newUser)
         {
             var user = await _unitOfWork.UserManager.FindByNameAsync(newUser.UserName);
@@ -59,6 +76,20 @@ namespace AuctionBLL.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task CreateUserMoneyAsync(string userId, MoneyDto money)
+        {
+            var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+
+            if (user is null)
+                throw new InvalidOperationException("User not found");
+
+            var mappedMoney = _mapper.Map<Money>(money); 
+            
+            user.Wallet.Money.Add(mappedMoney);
+            await _unitOfWork.UserManager.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
         public async Task<ClaimsIdentity> LoginAsync(UserDto userDto)
         {
             var user = await _unitOfWork.UserManager.FindAsync(userDto.UserName, userDto.Password);
@@ -69,6 +100,28 @@ namespace AuctionBLL.Services
             var result = await _unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
 
             return result;
+        }
+
+        public async Task AddRoleAsync(string userId, string role)
+        {
+            var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+
+            if (user is null)
+                throw new InvalidOperationException("User not found");
+
+            await _unitOfWork.UserManager.AddToRoleAsync(userId, role);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task RemoveRoleAsync(string userId, string role)
+        {
+            var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+
+            if (user is null)
+                throw new InvalidOperationException("User not found");
+
+            await _unitOfWork.UserManager.RemoveFromRoleAsync(userId, role);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public Task UpdateAsync(UserDto updated)

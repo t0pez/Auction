@@ -17,5 +17,6 @@ namespace AuctionBLL.Dto
 
         public ICollection<LotDto> OwnedLots { get; set; } = new List<LotDto>();
         public ICollection<LotDto> AsParticipant { get; set; } = new List<LotDto>();
+        public ICollection<LotDto> AcquiredLots { get; set; } = new List<LotDto>();
     }
 }

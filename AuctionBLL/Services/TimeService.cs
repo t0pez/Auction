@@ -68,7 +68,7 @@ namespace AuctionBLL.Services
                         if (pair.Value <= DateTime.Now)
                             OnTimeToInvoke(pair.Key);
 
-                    await Task.Delay(1_000);
+                    await Task.Delay(60_000);
                 } while (true);
             });
         }

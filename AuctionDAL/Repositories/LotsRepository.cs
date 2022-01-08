@@ -25,9 +25,9 @@ namespace AuctionDAL.Repositories
             return await Lots.ToListAsync();
         }
 
-        public Task<IEnumerable<Lot>> GetLotsByPredicateAsync(Func<Lot, bool> predicate)
+        public async Task<IEnumerable<Lot>> GetLotsByPredicateAsync(Func<Lot, bool> predicate)
         {
-            return Task<IEnumerable<Lot>>.Factory.StartNew(() => Lots.Where(predicate).ToList());
+            return Lots.ToListAsync().Result.Where(predicate);
         }
 
         public async Task<Lot> GetLotByIdAsync(Guid id)

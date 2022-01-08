@@ -9,8 +9,8 @@ namespace AuctionWeb.Infrastructure
         public override void Load()
         {
             Bind<IUsersService>().To<UsersService>();
-            Bind<ILotsService>().To<LotsService>();
-            Unbind<ModelValidatorProvider>();
+            Bind<ILotsService>().To<LotsService>().InSingletonScope();
+            //Unbind<ModelValidatorProvider>();
         }
     }
 }
