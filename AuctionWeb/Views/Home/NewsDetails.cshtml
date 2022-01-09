@@ -1,0 +1,45 @@
+﻿@model AuctionWeb.ViewModels.News.NewsListViewModel
+
+@{
+    ViewBag.Title = "NewsDetails";
+}
+
+<h2>News Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOfCreation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateOfCreation)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @if(User.IsInRole("admin"))
+    {
+        @Html.ActionLink("Edit", "NewsEdit", new {id = Model.Id}, new{ @class="btn btn-primary"});
+        @Html.Raw(" |");
+    }
+    @Html.ActionLink("Back to Main page", "Index")
+</p>

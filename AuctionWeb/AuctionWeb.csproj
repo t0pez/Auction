@@ -197,6 +197,9 @@
     <Compile Include="ViewModels\Lots\LotDetailsViewModel.cs" />
     <Compile Include="ViewModels\Lots\LotListViewModel.cs" />
     <Compile Include="ViewModels\Money\MoneyTopUpViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsCreateViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsEditViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsListViewModel.cs" />
     <Compile Include="ViewModels\Users\LoginInfoModel.cs" />
     <Compile Include="ViewModels\Money\MoneyCreateViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
@@ -290,6 +293,9 @@
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Users\TopUpUserBalance.cshtml" />
+    <Content Include="Views\Home\NewsDetails.cshtml" />
+    <Content Include="Views\Home\NewsEdit.cshtml" />
+    <Content Include="Views\Home\NewsCreate.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

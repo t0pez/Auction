@@ -81,10 +81,7 @@ namespace AuctionWeb.Controllers
             catch(Exception e)
             {
                 ModelState.AddModelError("", e.Message);
-                if (e.InnerException != null) 
-                    ModelState.AddModelError("", e.InnerException.Message);
-                if (e.InnerException != null && e.InnerException.InnerException != null) 
-                    ModelState.AddModelError("", e.InnerException.InnerException.Message);
+
                 return View(nameof(Create), viewModel);
             }
         }

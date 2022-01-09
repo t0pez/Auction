@@ -46,8 +46,8 @@ namespace AuctionBLL.Infrastructure
                 .ForMember(dto => dto.Status,
                     expression => expression.MapFrom(lot => (LotStatus) lot.Status));
 
-            
 
+            CreateMap<News, NewsDto>().ReverseMap();
         }
     }
 }

@@ -3,6 +3,7 @@ using AuctionWeb.ViewModels.Lots;
 using AutoMapper;
 using System;
 using AuctionWeb.ViewModels.Money;
+using AuctionWeb.ViewModels.News;
 using AuctionWeb.ViewModels.Users;
 
 namespace AuctionWeb.Infrastructure
@@ -34,6 +35,10 @@ namespace AuctionWeb.Infrastructure
             CreateMap<UserDto, UserDetailsViewModel>();
 
             CreateMap<MoneyCreateViewModel, MoneyDto>();
+
+            CreateMap<NewsDto, NewsListViewModel>().ReverseMap();
+            CreateMap<NewsDto, NewsEditViewModel>().ReverseMap();
+            CreateMap<NewsCreateViewModel, NewsDto>();
         }
     }
 }

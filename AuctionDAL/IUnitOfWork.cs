@@ -9,6 +9,7 @@ namespace AuctionDAL
     public interface IUnitOfWork
     {
         ILotsRepository LotsRepository { get; }
+        INewsRepository NewsRepository { get; }
         UserManager<User> UserManager { get; }
         RoleManager<IdentityRole> RoleManager { get; }
 
