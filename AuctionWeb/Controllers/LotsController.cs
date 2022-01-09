@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -121,33 +122,21 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.AddParticipantAsync(lotId, userId);
 
+                return RedirectToAction(nameof(Details), new {id = lotId});
+            }
+            catch (ValidationException exception)
+            {
+                ModelState.AddModelError("", exception.Message);
+
                 return RedirectToAction(nameof(Details), new { id = lotId });
             }
             catch(Exception e)
             {
+
+
                 return View("Error");
             }
         }
 
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        
     }
 }

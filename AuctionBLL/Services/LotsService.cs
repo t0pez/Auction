@@ -6,6 +6,7 @@ using AuctionDAL.Models;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AuctionBLL.Extensions.Dto;
@@ -13,10 +14,10 @@ using AuctionDAL.Extensions.Models;
 
 namespace AuctionBLL.Services
 {
-    public class LotsService : ILotsService
+    public class LotsService : ILotsService, IDisposable
     {
-        private readonly ITimeService<Guid> _openTimeEventService;
-        private readonly ITimeService<Guid> _closeTimeEventService;
+        private readonly ITimeEventService<Guid> _openTimeEventService;
+        private readonly ITimeEventService<Guid> _closeTimeEventService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -24,57 +25,18 @@ namespace AuctionBLL.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _openTimeEventService = new TimeService<Guid>();
-            _closeTimeEventService = new TimeService<Guid>();
+            _openTimeEventService = new TimeEventService<Guid>();
+            _closeTimeEventService = new TimeEventService<Guid>();
 
-            
-            _openTimeEventService.TimeToInvoke += async lotId =>
-            {
-                _openTimeEventService.Remove(lotId);
+            _openTimeEventService.TimeToInvoke += OpenLotAsync;
+            _closeTimeEventService.TimeToInvoke += CloseLotAsync;
 
-                await OpenLotAsync(lotId);
-            };
-            
-            _closeTimeEventService.TimeToInvoke += async lotId =>
-            {
-                _closeTimeEventService.Remove(lotId);
-                
-                await CloseLotAsync(lotId);
-            };
-            
             InitializeListeners();
         }
         
         public async Task<IEnumerable<LotDto>> GetAllLotsAsync()
         {
             var unmappedItems = await _unitOfWork.LotsRepository.GetAllLotsAsync();
-
-            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
-
-            return mappedItems;
-        }
-
-        public async Task<IEnumerable<LotDto>> GetAllCreatedLotsAsync()
-        {
-            var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Created);
-
-            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
-
-            return mappedItems;
-        }
-
-        public async Task<IEnumerable<LotDto>> GetAllOpenedLotsAsync()
-        {
-            var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Opened);
-
-            var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
-
-            return mappedItems;
-        }
-
-        public async Task<IEnumerable<LotDto>> GetAllClosedLotsAsync()
-        {
-            var unmappedItems = await _unitOfWork.LotsRepository.GetLotsByPredicateAsync(lot => lot.Status == (int) LotStatus.Closed);
 
             var mappedItems = _mapper.Map<IEnumerable<LotDto>>(unmappedItems);
 
@@ -141,11 +103,11 @@ namespace AuctionBLL.Services
                 var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
 
                 if (lot.Status is (int) LotStatus.Closed or (int) LotStatus.Cancelled)
-                    throw new InvalidOperationException("Can not add participant to closed or cancelled lot");
+                    throw new ValidationException("Can not add participant to closed or cancelled lot");
                 if (lot.Participants.Contains(user))
-                    throw new InvalidOperationException("User is already a participant");
+                    throw new ValidationException("User is already a participant");
                 if (user.HasMoneyOfCurrency(lot.StartPrice.Currency) == false)
-                    throw new InvalidOperationException($"Need wallet with this type of currency {lot.StartPrice.Currency}");
+                    throw new ValidationException($"Need wallet with this type of currency {lot.StartPrice.Currency}");
 
                 lot.Participants.Add(user);
                 user.LotsAsParticipant.Add(lot);
@@ -227,7 +189,7 @@ namespace AuctionBLL.Services
                 throw new InvalidOperationException("Lot is already opened");
 
             lot.Status = (int) LotStatus.Opened;
-            lot.EndDate = lot.StartDate + lot.ProlongationTime;
+            lot.EndDate = DateTime.Now + lot.ProlongationTime;
 
             await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
             await _unitOfWork.SaveChangesAsync();
@@ -289,6 +251,12 @@ namespace AuctionBLL.Services
                 || lot.MinStepPrice is null
                 || lot.MinStepPrice.Amount < 0)
                 throw new ArgumentException("Argument parameters is not correct", nameof(lot));
+        }
+
+        public void Dispose()
+        {
+            _openTimeEventService.TimeToInvoke -= OpenLotAsync;
+            _closeTimeEventService.TimeToInvoke -= CloseLotAsync;
         }
     }
 }
