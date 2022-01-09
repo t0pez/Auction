@@ -152,9 +152,15 @@ namespace AuctionWeb.Controllers
         }
 
 
-        public ActionResult CreateUserWallet()
+        public async Task<ActionResult> CreateUserWallet()
         {
-            var currencies = Currency.List.Select(currency => new SelectListItem()
+            var userId = User.Identity.GetUserId();
+            var user = await _usersService.GetByUserIdAsync(userId);
+
+            var userCurrencies = user.Wallet.Money.Select(money => money.Currency);
+            var availableCurrencies = Currency.List.Except(userCurrencies);
+
+            var currencies = availableCurrencies.Select(currency => new SelectListItem()
             {
                 Value = currency.Value.ToString(),
                 Text = currency.IsoName

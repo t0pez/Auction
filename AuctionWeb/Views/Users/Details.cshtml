@@ -65,7 +65,7 @@
                 }
             }
             
-            @if (User.Identity.GetUserId() == Model.Id)
+            @if (User.Identity.GetUserId() == Model.Id && Model.Wallet.Money.Count < 4)
             {
                 @Html.ActionLink("Create wallet", "CreateUserWallet", "Users", new {area = ""}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
             }

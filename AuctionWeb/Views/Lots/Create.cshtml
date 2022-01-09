@@ -40,12 +40,8 @@
         <div class="row">
 
             <div class="col-md form-floating mb-3">
-                <select class="form-select" data-val="true" data-val-required="Требуется поле Currency." id="Currency" name="Currency" style="min-width: 100%"><option value="3">EUR</option>
-                    <option value="4">RUB</option>
-                    <option value="1">UAH</option>
-                    <option value="2">USD</option>
-                </select>
-                @*@Html.DropDownListFor(model => model.Currency, ViewBag.Currencies as SelectList, new {@class = "form-select", @style = "min-width: 100%"})*@
+                
+                @Html.DropDownListFor(model => model.Currency, ViewBag.Currencies as SelectList, new {@class = "form-select", @style = "min-width: 100%"})
                 @Html.LabelFor(model => model.Currency, htmlAttributes: new {@class = "form-label col-md-2 ps-4"})
                 @Html.ValidationMessageFor(model => model.Currency, "", new {@class = "text-danger"})
             </div>

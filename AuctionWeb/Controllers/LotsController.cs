@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace AuctionWeb.Controllers
 {
@@ -50,9 +51,15 @@ namespace AuctionWeb.Controllers
         }
 
         [Authorize(Roles = "user, admin")]
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            var currencies = Currency.List.Select(currency => new SelectListItem()
+            var userId = User.Identity.GetUserId();
+            var usersService = HttpContext.GetOwinContext().GetUserManager<IUsersService>();
+
+            var user = await usersService.GetByUserIdAsync(userId);
+
+            var userCurrencies = user.Wallet.Money.Select(money => money.Currency);
+            var currencies = userCurrencies.Select(currency => new SelectListItem()
             {
                 Value = currency.Value.ToString(),
                 Text = currency.IsoName
