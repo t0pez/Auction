@@ -171,7 +171,6 @@ namespace AuctionWeb.Controllers
         {
             
             var mapped = _mapper.Map<MoneyDto>(money);
-            mapped.Id = Guid.NewGuid();
 
             await _usersService.CreateUserMoneyAsync(userId, mapped);
 

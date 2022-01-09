@@ -12,7 +12,6 @@ namespace AuctionWeb.ViewModels.Lots
         [MinLength(20)] 
         public string Description { get; set; }
 
-
         [Required] 
         public string Currency { get; set; }
         [Required] 

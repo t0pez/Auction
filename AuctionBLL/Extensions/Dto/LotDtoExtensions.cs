@@ -11,7 +11,7 @@ namespace AuctionBLL.Extensions.Dto
             lotDto.Id = Guid.NewGuid();
             lotDto.Status = LotStatus.Created;
             lotDto.DateOfCreation = DateTime.Now;
-            lotDto.ActualPrice = lotDto.StartPrice;
+            lotDto.ActualPrice = new MoneyDto(lotDto.StartPrice.Amount, lotDto.StartPrice.Currency);
         }
     }
 }

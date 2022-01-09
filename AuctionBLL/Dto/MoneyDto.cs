@@ -7,49 +7,27 @@ namespace AuctionBLL.Dto
     {
         public Guid Id { get; set; }
         public decimal Amount { get; set; }
-        public readonly Currency Currency;
+        public Currency Currency { get; set; }
 
-        public MoneyDto(Guid id, decimal amount, Currency currency)
+        public MoneyDto(Guid id, decimal amount, int currency)
         {
             Id = id;
             Amount = amount;
-            Currency = currency;
+            Currency = Currency.FromValue(currency);
         }
         
         public MoneyDto(decimal amount, int currency)
         {
+            Id = Guid.NewGuid();
             Amount = amount;
             Currency = Currency.FromValue(currency);
         }
-
-        public static MoneyDto operator +(MoneyDto left, MoneyDto right)
-        {
-            if (left is null)
-                throw new ArgumentNullException(nameof(left));
-            if (right is null)
-                throw new ArgumentNullException(nameof(right));
-            if (left.Currency != right.Currency)
-                throw new InvalidOperationException("Currency types are different");
-
-            left.Amount -= right.Amount;
-
-            return new MoneyDto(left.Amount, left.Currency);
-        }
         
-        public static MoneyDto operator -(MoneyDto left, MoneyDto right)
+        public MoneyDto(decimal amount, Currency currency)
         {
-            if (left is null)
-                throw new ArgumentNullException(nameof(left));
-            if (right is null)
-                throw new ArgumentNullException(nameof(right));
-            if (left.Currency != right.Currency)
-                throw new InvalidOperationException("Currency types are different");
-            if (left.Amount - right.Amount < 0)
-                throw new InvalidOperationException("Not enough money amount");
-
-            left.Amount -= right.Amount;
-
-            return new MoneyDto(left.Amount, left.Currency);
+            Id = Guid.NewGuid();
+            Amount = amount;
+            Currency = Currency.FromValue(currency);
         }
         
         public static bool operator >(MoneyDto left, MoneyDto right)

@@ -44,14 +44,7 @@ namespace AuctionBLL.Services
             
             InitializeListeners();
         }
-
-        private IEnumerable<LotDto> MapLotsToDto(IEnumerable<Lot> unmappedItems) =>
-            _mapper.Map<IEnumerable<Lot>, IEnumerable<LotDto>>(unmappedItems);
         
-        private LotDto MapLotToViewModel(Lot unmapped) => _mapper.Map<Lot, LotDto>(unmapped);
-
-        private Lot MapLotViewModelToLot(LotDto unmapped) => _mapper.Map<LotDto, Lot>(unmapped);
-
         public async Task<IEnumerable<LotDto>> GetAllLotsAsync()
         {
             var unmappedItems = await _unitOfWork.LotsRepository.GetAllLotsAsync();
@@ -104,14 +97,14 @@ namespace AuctionBLL.Services
             }
         }
 
-        public async Task<LotDto> CreateLotAsync(LotDto lotDto)
+        public async Task<LotDto> CreateLotAsync(LotDto lotDto, string ownerId)
         {
             if (lotDto is null)
                 throw new ArgumentNullException(nameof(lotDto));
             
             AssertModelIsValid(lotDto);
 
-            var owner = await _unitOfWork.UserManager.FindByIdAsync(lotDto.Owner.Id);
+            var owner = await _unitOfWork.UserManager.FindByIdAsync(ownerId);
 
             if (owner is null)
                 throw new InvalidOperationException("User is not authorized or not found");
@@ -164,7 +157,7 @@ namespace AuctionBLL.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                var mapped = MapLotToViewModel(lot);
+                var mapped = _mapper.Map<LotDto>(lot);
 
                 return mapped;
             }
@@ -202,7 +195,7 @@ namespace AuctionBLL.Services
                 await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
                 await _unitOfWork.SaveChangesAsync();
                 
-                var mapped = MapLotToViewModel(lot);
+                var mapped = _mapper.Map<LotDto>(lot);
 
                 return mapped;
             }
@@ -291,7 +284,6 @@ namespace AuctionBLL.Services
         {
             if (String.IsNullOrEmpty(lot.Name)
                 || String.IsNullOrEmpty(lot.Description)
-                || lot.Owner is null
                 || lot.StartPrice is null
                 || lot.StartPrice.Amount < 0
                 || lot.MinStepPrice is null

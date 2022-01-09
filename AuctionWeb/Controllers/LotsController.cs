@@ -54,7 +54,7 @@ namespace AuctionWeb.Controllers
         {
             var currencies = Currency.List.Select(currency => new SelectListItem()
             {
-                Value = currency.Value.ToString(), 
+                Value = currency.Value.ToString(),
                 Text = currency.IsoName
             }).ToList();
 
@@ -71,18 +71,20 @@ namespace AuctionWeb.Controllers
             try
             {
                 var dto = _mapper.Map<LotDto>(viewModel);
-                dto.Owner = new UserDto()
-                {
-                    Id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId()
-                };
 
-                await _lotsService.CreateLotAsync(dto);
+                var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
 
-                return RedirectToAction(nameof(Index));
+                var created = await _lotsService.CreateLotAsync(dto, userId);
+
+                return RedirectToAction(nameof(Details), new {id = created.Id});
             }
             catch(Exception e)
             {
-
+                ModelState.AddModelError("", e.Message);
+                if (e.InnerException != null) 
+                    ModelState.AddModelError("", e.InnerException.Message);
+                if (e.InnerException != null && e.InnerException.InnerException != null) 
+                    ModelState.AddModelError("", e.InnerException.InnerException.Message);
                 return View(nameof(Create), viewModel);
             }
         }
