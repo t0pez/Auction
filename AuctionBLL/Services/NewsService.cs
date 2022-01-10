@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AuctionBLL.Dto;
+using AuctionBLL.Interfaces;
 using AuctionDAL;
 using AuctionDAL.Exceptions;
 using AuctionDAL.Models;

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using AuctionBLL.Interfaces;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace AuctionWeb.Controllers
@@ -18,23 +19,24 @@ namespace AuctionWeb.Controllers
     {
         private readonly ILotsService _lotsService;
         private readonly IMapper _mapper;
-        
+
 
         public LotsController(ILotsService lotsService, IMapper mapper)
         {
             _lotsService = lotsService;
             _mapper = mapper;
         }
-        
+
         public async Task<ActionResult> Index()
         {
             var unmapped = await _lotsService.GetAllLotsAsync();
 
-            var mapped = _mapper.Map<IEnumerable<LotListViewModel>>(unmapped).OrderBy(model => model.Status); 
-            
+            var mapped = _mapper.Map<IEnumerable<LotListViewModel>>(unmapped).OrderBy(model => model.Status)
+                .ThenBy(model => model.Name);
+
             return View(mapped);
         }
-        
+
         public async Task<ActionResult> Details(Guid id)
         {
             try
@@ -45,9 +47,9 @@ namespace AuctionWeb.Controllers
 
                 return View(mapped);
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", new {id});
             }
         }
 
@@ -56,7 +58,6 @@ namespace AuctionWeb.Controllers
         {
             var userId = User.Identity.GetUserId();
             var usersService = HttpContext.GetOwinContext().GetUserManager<IUsersService>();
-
             var user = await usersService.GetByUserIdAsync(userId);
 
             var userCurrencies = user.Wallet.Money.Select(money => money.Currency);
@@ -84,13 +85,17 @@ namespace AuctionWeb.Controllers
 
                 var created = await _lotsService.CreateLotAsync(dto, userId);
 
-                return RedirectToAction(nameof(Details), new {id = created.Id});
+                return RedirectToAction("Details", new {id = created.Id});
             }
-            catch(Exception e)
+            catch (ArgumentException e)
             {
                 ModelState.AddModelError("", e.Message);
 
-                return View(nameof(Create), viewModel);
+                return View("Create", viewModel);
+            }
+            catch (InvalidOperationException)
+            {
+                return RedirectToAction("Index");
             }
         }
 
@@ -104,14 +109,18 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.SetLotActualPriceAsync(lotId, userId, newPrice);
 
-                return RedirectToAction(nameof(Details), new { id = lotId });
+                return RedirectToAction("Details", new {id = lotId});
             }
-            catch(Exception e)
+            catch (ArgumentException e)
             {
-                return View("Error");
+                return RedirectToAction("Details", new {lotId});
+            }
+            catch (InvalidOperationException)
+            {
+                return RedirectToAction("Index");
             }
         }
-        
+
         [Authorize(Roles = "user, admin")]
         [HttpPost]
         public async Task<ActionResult> SetUserAsParticipant(Guid lotId)
@@ -124,17 +133,15 @@ namespace AuctionWeb.Controllers
 
                 return RedirectToAction(nameof(Details), new {id = lotId});
             }
-            catch (ValidationException exception)
+            catch (ArgumentException e)
             {
-                ModelState.AddModelError("", exception.Message);
+                ModelState.AddModelError("", e.Message);
 
-                return RedirectToAction(nameof(Details), new { id = lotId });
+                return RedirectToAction("Details", new {id = lotId});
             }
-            catch(Exception e)
+            catch (InvalidOperationException)
             {
-
-
-                return View("Error");
+                return RedirectToAction("Index");
             }
         }
 

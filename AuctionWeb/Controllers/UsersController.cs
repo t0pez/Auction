@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using AuctionBLL.Interfaces;
 
 namespace AuctionWeb.Controllers
 {
@@ -37,33 +38,31 @@ namespace AuctionWeb.Controllers
 
             return View(mapped);
         }
+        
+        public async Task<ActionResult> Details(string userId)
+        {
+            try
+            {
+                var unmapped = await _usersService.GetByUserIdAsync(userId);
+                var mapped = _mapper.Map<UserDetailsViewModel>(unmapped);
+
+                var userService = HttpContext.GetOwinContext().GetUserManager<IUsersService>();
+                var userRoles = await userService.GetUserRolesAsync(userId);
+                var role = String.Join(" ", userRoles);
+
+                mapped.Role = role;
+
+                return View(mapped);
+            }
+            catch (InvalidOperationException e)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
 
         public ActionResult Create()
         {
             return View();
-        }
-
-        public async Task<ActionResult> Details(string userId)
-        {
-            UserDto unmapped;
-            try
-            {
-                unmapped = await _usersService.GetByUserIdAsync(userId);
-            }
-            catch (Exception e)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            var mapped = _mapper.Map<UserDetailsViewModel>(unmapped);
-
-            var userService = HttpContext.GetOwinContext().GetUserManager<IUsersService>();
-            var userRoles = await userService.GetUserRolesAsync(userId);
-            var role = String.Join(" ", userRoles);
-
-            mapped.Role = role;
-
-            return View(mapped);
         }
 
         [HttpPost]
@@ -77,11 +76,11 @@ namespace AuctionWeb.Controllers
 
                 await _usersService.CreateAsync(mapped);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Users");
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
-                ModelState.AddModelError("", "User with this username already exists");
+                ModelState.AddModelError("", e.Message);
                 return View();
             }
         }
@@ -90,10 +89,16 @@ namespace AuctionWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> AddUserToAdminRole(string userId)
         {
-            await _usersService.AddRoleAsync(userId, "admin");
+            try
+            {
+                await _usersService.AddRoleAsync(userId, "admin");
 
-
-            return RedirectToAction("Details", "Users", new {userId});
+                return RedirectToAction("Details", "Users", new { userId });
+            }
+            catch (InvalidOperationException e)
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [Authorize(Roles = "admin")]
@@ -114,32 +119,26 @@ namespace AuctionWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LogIn(LoginInfoModel loginInfo)
         {
-            var userDto = new UserDto
-            {
-                UserName = loginInfo.Login,
-                Password = loginInfo.Password
-            };
-
-            ClaimsIdentity claim;
-
             try
             {
-                claim = await _usersService.LoginAsync(userDto);
+                var userDto = _mapper.Map<UserDto>(loginInfo);
+
+                var claim = await _usersService.LoginAsync(userDto);
+
+                var authManager = HttpContext.GetOwinContext().Authentication;
+                authManager.SignOut();
+                authManager.SignIn(new AuthenticationProperties
+                {
+                    IsPersistent = true
+                }, claim);
+
+                return RedirectToAction("Index", "Home");
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
-                ModelState.AddModelError("", "Wrong login or password");
+                ModelState.AddModelError("", e.Message);
                 return View(loginInfo);
             }
-
-            var authManager = HttpContext.GetOwinContext().Authentication;
-            authManager.SignOut();
-            authManager.SignIn(new AuthenticationProperties
-            {
-                IsPersistent = true
-            }, claim);
-
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -198,17 +197,11 @@ namespace AuctionWeb.Controllers
 
                 return RedirectToAction("Details", new { userId });
             }
-            catch (InvalidOperationException)
+            catch (ArgumentException e)
             {
-                ModelState.AddModelError("", "Amount to add can not be less than 0");
+                ModelState.AddModelError("", e.Message);
                 return View();
             }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-            
         }
     }
 }

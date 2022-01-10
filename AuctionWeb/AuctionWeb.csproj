@@ -186,6 +186,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LotsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Extensions\ViewModel\LotDetailsViewModelExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

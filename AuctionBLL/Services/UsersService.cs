@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuctionBLL.Dto;
+using AuctionBLL.Interfaces;
 using AuctionDAL;
 using AuctionDAL.Extensions.Models;
 using AuctionDAL.Models;
@@ -57,16 +58,10 @@ namespace AuctionBLL.Services
             if (user is not null)
                 throw new InvalidOperationException("User already exists");
 
-            user = new User()
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserName = newUser.UserName,
-                FirstName = newUser.FirstName,
-                LastName = newUser.LastName,
-                Wallet = new Wallet{Id = Guid.NewGuid()},
-                OwnedLots = new List<Lot>(),
-                LotsAsParticipant = new List<Lot>()
-            };
+            user = _mapper.Map<User>(newUser);
+
+            user.Id = Guid.NewGuid().ToString();
+            user.Wallet = new Wallet {Id = Guid.NewGuid()};
 
             var operationResult = await _unitOfWork.UserManager.CreateAsync(user, newUser.Password);
 
@@ -83,6 +78,8 @@ namespace AuctionBLL.Services
 
             if (user is null)
                 throw new InvalidOperationException("User not found");
+            if(user.HasMoneyOfCurrency(money.Currency.Value))
+                throw new ArgumentException("Already has account of this currency");
 
             var mappedMoney = _mapper.Map<Money>(money); 
             
@@ -96,7 +93,7 @@ namespace AuctionBLL.Services
             var user = await _unitOfWork.UserManager.FindAsync(userDto.UserName, userDto.Password);
 
             if (user is null)
-                throw new InvalidOperationException("User not found");
+                throw new InvalidOperationException("Wrong login or password");
 
             var result = await _unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
 
@@ -128,32 +125,20 @@ namespace AuctionBLL.Services
         public async Task<UserDto> TopUpUserBalanceAsync(string userId, Guid moneyId, decimal addedAmount)
         {
             if (addedAmount < 0)
-                throw new InvalidOperationException();
+                throw new ArgumentException("Added amount can not be less than zero");
 
-            try
-            {
-                var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+            var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
                 
-                var userMoneyAmount = user.GetMoneyById(moneyId);
-                userMoneyAmount.Amount += addedAmount;
+            var userMoneyAmount = user.GetMoneyById(moneyId);
+            userMoneyAmount.Amount += addedAmount;
 
-                await _unitOfWork.UserManager.UpdateAsync(user);
-                await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.UserManager.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
 
-                var mapped = _mapper.Map<UserDto>(user);
-                return mapped;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            var mapped = _mapper.Map<UserDto>(user);
+            return mapped;
         }
-
-        public Task UpdateAsync(UserDto updated)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void Dispose()
         {
             

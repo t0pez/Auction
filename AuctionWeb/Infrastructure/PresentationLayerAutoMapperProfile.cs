@@ -13,6 +13,8 @@ namespace AuctionWeb.Infrastructure
         public PresentationLayerAutoMapperProfile()
         {
             CreateMap<LotDto, LotDetailsViewModel>();
+
+            CreateMap<LotDto, LotListViewModel>();
             
             CreateMap<LotCreateViewModel, LotDto>()
                 .ForMember(dto => dto.StartDate,
@@ -26,18 +28,25 @@ namespace AuctionWeb.Infrastructure
                     expression => expression.MapFrom(model => 
                         new MoneyDto(model.MinStepPrice, Convert.ToInt32(model.Currency))));
 
-            CreateMap<LotDto, LotListViewModel>();
 
+            CreateMap<LoginInfoModel, UserDto>()
+                .ForMember(dto => dto.UserName,
+                    expression => expression.MapFrom(model => model.Login));
+            
             CreateMap<UserCreateViewModel, UserDto>();
-
+            
             CreateMap<UserDto, UserListModel>();
-
+            
             CreateMap<UserDto, UserDetailsViewModel>();
 
+            
             CreateMap<MoneyCreateViewModel, MoneyDto>();
 
+
             CreateMap<NewsDto, NewsListViewModel>().ReverseMap();
+            
             CreateMap<NewsDto, NewsEditViewModel>().ReverseMap();
+            
             CreateMap<NewsCreateViewModel, NewsDto>();
         }
     }

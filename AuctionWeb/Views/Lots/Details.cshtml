@@ -1,4 +1,5 @@
 ﻿@using AuctionBLL.Enums
+@using AuctionWeb.Extensions.ViewModel
 @using Microsoft.AspNet.Identity
 @model AuctionWeb.ViewModels.Lots.LotDetailsViewModel
 
@@ -56,6 +57,7 @@
                     @Html.DisplayFor(model => model.MinStepPrice.Amount)
                     @Html.DisplayFor(model => model.MinStepPrice.Currency.IsoName)
                 </div>
+                
             </div>
 
             @{
@@ -79,7 +81,7 @@
                         }
 
                     }
-                    else if(Model.Status == LotStatus.Opened)
+                    else if(Model.Status == LotStatus.Opened && Model.UserCanMakeStep(userId))
                     {
                         using (Html.BeginForm("SetNewPrice", "Lots", FormMethod.Post))
                         {

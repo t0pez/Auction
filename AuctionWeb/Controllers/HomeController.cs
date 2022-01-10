@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AuctionBLL.Dto;
+using AuctionBLL.Interfaces;
 using AuctionBLL.Services;
 using AuctionWeb.ViewModels.News;
 using AutoMapper;

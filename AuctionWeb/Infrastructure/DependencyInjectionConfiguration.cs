@@ -1,6 +1,7 @@
 ﻿using AuctionBLL.Services;
 using Ninject.Modules;
 using System.Web.Mvc;
+using AuctionBLL.Interfaces;
 
 namespace AuctionWeb.Infrastructure
 {

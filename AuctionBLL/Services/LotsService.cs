@@ -1,16 +1,16 @@
 ﻿using AuctionBLL.Dto;
 using AuctionBLL.Enums;
+using AuctionBLL.Extensions.Dto;
+using AuctionBLL.Interfaces;
 using AuctionDAL;
 using AuctionDAL.Exceptions;
+using AuctionDAL.Extensions.Models;
 using AuctionDAL.Models;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using AuctionBLL.Extensions.Dto;
-using AuctionDAL.Extensions.Models;
 
 namespace AuctionBLL.Services
 {
@@ -53,9 +53,9 @@ namespace AuctionBLL.Services
 
                 return mappedItem;
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException e)
             {
-                throw;
+                throw new InvalidOperationException("Lot not found", e);
             }
         }
 
@@ -69,27 +69,19 @@ namespace AuctionBLL.Services
             var owner = await _unitOfWork.UserManager.FindByIdAsync(ownerId);
 
             if (owner is null)
-                throw new InvalidOperationException("User is not authorized or not found");
+                throw new InvalidOperationException("User not found");
 
             if (owner.HasMoneyOfCurrency(lotDto.StartPrice.Currency.Value) == false)
-                throw new InvalidOperationException( // TODO: ValidationException
-                    $"Need wallet with this type of currency {lotDto.StartPrice.Currency.IsoName}");
+                throw new ArgumentException($"Need wallet with this type of currency {lotDto.StartPrice.Currency.IsoName}");
             
             lotDto.CreatingInitialize();
 
             var lotModel = _mapper.Map<Lot>(lotDto);
             lotModel.Owner = owner;
             
-            try
-            {
-                await _unitOfWork.LotsRepository.CreateLotAsync(lotModel);
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (ItemAlreadyExistsException)
-            {
-                throw;
-            }
-
+            await _unitOfWork.LotsRepository.CreateLotAsync(lotModel);
+            await _unitOfWork.SaveChangesAsync();
+            
             _openTimeEventService.Add(lotDto.Id, (DateTime) lotDto.StartDate);
 
             return lotDto;
@@ -103,11 +95,11 @@ namespace AuctionBLL.Services
                 var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
 
                 if (lot.Status is (int) LotStatus.Closed or (int) LotStatus.Cancelled)
-                    throw new ValidationException("Can not add participant to closed or cancelled lot");
+                    throw new InvalidOperationException("Can not add participant to closed or cancelled lot");
                 if (lot.Participants.Contains(user))
-                    throw new ValidationException("User is already a participant");
+                    throw new InvalidOperationException("User is already a participant");
                 if (user.HasMoneyOfCurrency(lot.StartPrice.Currency) == false)
-                    throw new ValidationException($"Need wallet with this type of currency {lot.StartPrice.Currency}");
+                    throw new ArgumentException($"Need wallet with this type of currency {lot.StartPrice.Currency}");
 
                 lot.Participants.Add(user);
                 user.LotsAsParticipant.Add(lot);
@@ -122,13 +114,14 @@ namespace AuctionBLL.Services
                 var mapped = _mapper.Map<LotDto>(lot);
 
                 return mapped;
+
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException e)
             {
-                throw;
+                throw new InvalidOperationException("Lot not found", e);
             }
         }
-
+        
         public async Task<LotDto> SetLotActualPriceAsync(Guid lotId, string userId, decimal newPrice)
         {
             try
@@ -138,97 +131,99 @@ namespace AuctionBLL.Services
                 var lotCurrency = lot.StartPrice.Currency;
 
                 if (lot.Status is (int) LotStatus.Closed or (int) LotStatus.Cancelled)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Can not set new price to closed or cancelled lot");
+                if (lot.Acquirer is not null && lot.Acquirer.Id == user.Id)
+                    throw new InvalidOperationException("User already leads lot. He can not make step");
                 if (newPrice < lot.HighestPrice.Amount + lot.MinStepPrice.Amount)
-                    throw new InvalidOperationException("New price can not be lower than actual plus minimal step");
+                    throw new ArgumentException("New price can not be lower than actual plus minimal step");
                 if (lot.Participants.Contains(user) == false)
-                    throw new InvalidOperationException("User is not a participant of the lot");
-
+                    throw new ArgumentException("User is not a participant of the lot");
                 if (user.HasMoneyOfCurrency(lotCurrency) == false)
-                    throw new InvalidOperationException($"Need wallet with this type of currency {lotCurrency}");
+                    throw new ArgumentException($"Need wallet with this type of currency {lotCurrency}");
                 if (user.HasEnoughMoneyOfCurrency(lotCurrency, newPrice) == false)
-                    throw new InvalidOperationException("Not enough money");
+                    throw new ArgumentException("Not enough money");
                 
                 lot.HighestPrice.Amount = newPrice;
                 lot.Acquirer = user;
                 lot.EndDate += lot.ProlongationTime;
-                _closeTimeEventService.Prolong(lot.Id, lot.ProlongationTime);
 
                 await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
                 await _unitOfWork.SaveChangesAsync();
-                
+
+                _closeTimeEventService.Prolong(lot.Id, lot.ProlongationTime);
+
                 var mapped = _mapper.Map<LotDto>(lot);
 
                 return mapped;
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException e)
             {
-                // TODO: Custom Exception
-                throw;
-            }
-            catch (InvalidOperationException) // TODO: change for custom exception (ValidationException or smth)
-            {
-                throw;
+                throw new InvalidOperationException("Lot not found", e);
             }
         }
 
         public async Task OpenLotAsync(Guid lotId)
         {
-            Lot lot;
             try
             {
-                lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
+                var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
+
+                if (lot.Status == (int) LotStatus.Opened)
+                    throw new InvalidOperationException("Lot is already opened");
+
+                lot.Status = (int) LotStatus.Opened;
+                lot.EndDate = DateTime.Now + lot.ProlongationTime;
+
+                await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+                await _unitOfWork.SaveChangesAsync();
+
+                _closeTimeEventService.Add(lot.Id, (DateTime) lot.EndDate);
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException e)
             {
-                // TODO: Custom Exception
-                throw;
+                throw new InvalidOperationException("Lot not found", e);
             }
-            
-            if (lot.Status == (int) LotStatus.Opened)
-                throw new InvalidOperationException("Lot is already opened");
-
-            lot.Status = (int) LotStatus.Opened;
-            lot.EndDate = DateTime.Now + lot.ProlongationTime;
-
-            await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
-            await _unitOfWork.SaveChangesAsync();
-            
-            _closeTimeEventService.Add(lot.Id, (DateTime)lot.EndDate);
         }
 
         public async Task CloseLotAsync(Guid id)
         {
-            var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(id);
-            
-            if (lot.Status is (int)LotStatus.Closed or (int)LotStatus.Cancelled)
-                throw new InvalidOperationException("Lot is already closed");
-            
-            lot.EndDate = DateTime.Now;
-
-            var acquirer = lot.Acquirer;
-
-            if (acquirer is null)
+            try
             {
-                lot.Status = (int) LotStatus.Cancelled;
+                var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(id);
+
+                if (lot.Status is (int)LotStatus.Closed or (int)LotStatus.Cancelled)
+                    throw new InvalidOperationException("Lot is already closed");
+
+                lot.EndDate = DateTime.Now;
+
+                var acquirer = lot.Acquirer;
+
+                if (acquirer is null)
+                {
+                    lot.Status = (int)LotStatus.Cancelled;
+                }
+                else
+                {
+                    lot.Status = (int)LotStatus.Closed;
+
+                    acquirer.AcquiredLots.Add(lot); // TODO: Extract to maybe some kind of a EventManager
+
+                    var acquirerMoney = acquirer.GetMoneyOfCurrency(lot.StartPrice.Currency);
+                    acquirerMoney.Amount -= lot.HighestPrice.Amount;
+
+                    var ownerMoney = lot.Owner.GetMoneyOfCurrency(lot.StartPrice.Currency);
+                    ownerMoney.Amount += lot.HighestPrice.Amount;
+
+                    await _unitOfWork.UserManager.UpdateAsync(acquirer);
+                }
+
+                await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
+                await _unitOfWork.SaveChangesAsync();
             }
-            else
+            catch (ItemNotFoundException e)
             {
-                lot.Status = (int) LotStatus.Closed;
-
-                acquirer.AcquiredLots.Add(lot);
-
-                var acquirerMoney = acquirer.GetMoneyOfCurrency(lot.StartPrice.Currency);
-                acquirerMoney.Amount -= lot.HighestPrice.Amount;
-                
-                var ownerMoney = lot.Owner.GetMoneyOfCurrency(lot.StartPrice.Currency);
-                ownerMoney.Amount += lot.HighestPrice.Amount;
-
-                await _unitOfWork.UserManager.UpdateAsync(acquirer);
+                throw new InvalidOperationException("Lot not found", e);
             }
-
-            await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
-            await _unitOfWork.SaveChangesAsync();
         }
 
         private void InitializeListeners()
