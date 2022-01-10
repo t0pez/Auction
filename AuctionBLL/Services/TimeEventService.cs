@@ -7,18 +7,16 @@ using AuctionBLL.Interfaces;
 
 namespace AuctionBLL.Services
 {
+    /// <inheritdoc cref="ITimeEventService{TKey}"/>
     public class TimeEventService<TKey> : ITimeEventService<TKey>
     {
         public event Func<TKey, Task> TimeToInvoke;
-
-        private readonly object _syncRoot = new();
+        
         private readonly ConcurrentDictionary<TKey, DateTime> _pairs;
-        private readonly List<TKey> _itemsToInvoke;
 
         public TimeEventService()
         {
             _pairs = new ConcurrentDictionary<TKey, DateTime>();
-            _itemsToInvoke = new List<TKey>();
 
             Task.Run(CheckForInvoke);
         }
@@ -79,6 +77,7 @@ namespace AuctionBLL.Services
 
                 checkForInvokeTask.Start();
                 checkForInvokeTask.Wait();
+
                 await Task.Delay(1_000);
             }
         }

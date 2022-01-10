@@ -6,6 +6,13 @@ namespace AuctionBLL.Extensions.Dto
 {
     public static class LotDtoExtensions
     {
+        /// <summary>
+        /// Initializes start data
+        /// </summary>
+        /// <remarks>
+        /// Sets new Id, Status, Date and Actual Price
+        /// </remarks>
+        /// <param name="lotDto"></param>
         public static void CreatingInitialize(this LotDto lotDto)
         {
             lotDto.Id = Guid.NewGuid();

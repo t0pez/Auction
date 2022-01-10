@@ -21,6 +21,10 @@ namespace AuctionWeb.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Process GET request for Main page
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> Index()
         {
             var unmappedNews = await _newsService.GetAllNewsAsync();
@@ -30,11 +34,21 @@ namespace AuctionWeb.Controllers
             return View(mappedItems);
         }
 
+        /// <summary>
+        /// Process GET request for Creating news
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> NewsCreate()
         {
             return View();
         }
 
+        /// <summary>
+        /// Process POST request for Creation news
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> NewsCreate(NewsCreateViewModel model)
         {
@@ -46,14 +60,22 @@ namespace AuctionWeb.Controllers
 
                 return RedirectToAction("NewsDetails", new { created.Id });
             }
-            catch (Exception e)
+            catch (InvalidOperationException e)
             {
-                return View("Error");
+                ModelState.AddModelError("", e.Message);
+                return View();
             }
         }
 
+        /// <summary>
+        /// Process GET request for News Details
+        /// </summary>
+        /// <param name="id">News id</param>
+        /// <returns></returns>
         public async Task<ActionResult> NewsDetails(Guid id)
         {
+            if (ModelState.IsValid == false)
+                return RedirectToAction("Index");
             try
             {
                 var unmappedItem = await _newsService.GetNewsByIdAsync(id);
@@ -62,12 +84,17 @@ namespace AuctionWeb.Controllers
 
                 return View(mappedItem);
             }
-            catch (Exception e)
+            catch (InvalidOperationException)
             {
                 return View("Error");
             }
         }
         
+        /// <summary>
+        /// Process GET request for News Edit
+        /// </summary>
+        /// <param name="id">News id</param>
+        /// <returns></returns>
         public async Task<ActionResult> NewsEdit(Guid id)
         {
             try
@@ -78,12 +105,17 @@ namespace AuctionWeb.Controllers
 
                 return View(mappedItem);
             }
-            catch (Exception e)
+            catch (InvalidOperationException)
             {
                 return View("Error");
             }
         }
 
+        /// <summary>
+        /// Process POST request for News Edit
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> NewsEdit(NewsEditViewModel model)
         {
@@ -95,7 +127,27 @@ namespace AuctionWeb.Controllers
 
                 return RedirectToAction("NewsDetails", new {mappedItem.Id});
             }
-            catch (Exception e)
+            catch (InvalidOperationException)
+            {
+                return View("Error");
+            }
+        }
+        
+        /// <summary>
+        /// Process POST request for News Delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> NewsDelete(Guid id)
+        {
+            try
+            {
+                await _newsService.DeleteNewsAsync(id);
+                
+                return RedirectToAction("Index");
+            }
+            catch (InvalidOperationException)
             {
                 return View("Error");
             }

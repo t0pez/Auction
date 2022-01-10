@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity;
 
 namespace AuctionBLL.Services
 {
+    /// <inheritdoc cref="IUsersService"/>
     public class UsersService : IUsersService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -128,7 +129,10 @@ namespace AuctionBLL.Services
                 throw new ArgumentException("Added amount can not be less than zero");
 
             var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
-                
+
+            if (user is null)
+                throw new InvalidOperationException("User not found");
+
             var userMoneyAmount = user.GetMoneyById(moneyId);
             userMoneyAmount.Amount += addedAmount;
 

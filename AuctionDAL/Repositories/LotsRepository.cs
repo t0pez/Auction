@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using AuctionDAL.Interfaces;
 
 namespace AuctionDAL.Repositories
 {
+    /// <inheritdoc cref="ILotsRepository"/>
     public class LotsRepository : ILotsRepository
     {
         private readonly AuctionContext _context;

@@ -37,6 +37,39 @@
                     @Html.DisplayFor(model => model.Role)
                 </dd>
             }
+            
+            <p>
+                @if (User.IsInRole("admin") && User.Identity.GetUserId() != Model.Id)
+                {
+                    if (Model.Role.Contains("admin"))
+                    {
+                        using (Html.BeginForm("RemoveUserFromAdminRole", "Users", FormMethod.Post))
+                        {
+                            <div class="d-none">
+                                <input class="" id="userId" name="userId" value="@Model.Id" type="text">
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">Remove from admins</button>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("AddUserToAdminRole", "Users", FormMethod.Post))
+                        {
+                            <div class="d-none">
+                                <input class="" id="userId" name="userId" value="@Model.Id" type="text">
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">Promote to admin</button>
+                            </div>
+                        }
+                    }
+                }
+    
+            </p>
         </div>
 
         <div class="col-6">
@@ -69,7 +102,6 @@
             {
                 @Html.ActionLink("Create wallet", "CreateUserWallet", "Users", new {area = ""}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
             }
-
 
         </div>
 
@@ -145,34 +177,5 @@
     </div>
 </div>
 <p>
-    @if (User.IsInRole("admin") && User.Identity.GetUserId() != Model.Id)
-    {
-        if (Model.Role.Contains("admin"))
-        {
-            using (Html.BeginForm("RemoveUserFromAdminRole", "Users", FormMethod.Post))
-            {
-                <div class="d-none">
-                    <input class="" id="userId" name="userId" value="@Model.Id" type="text">
-                </div>
-
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Remove from admins</button>
-                </div>
-            }
-        }
-        else
-        {
-            using (Html.BeginForm("AddUserToAdminRole", "Users", FormMethod.Post))
-            {
-                <div class="d-none">
-                    <input class="" id="userId" name="userId" value="@Model.Id" type="text">
-                </div>
-
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Promote to admin</button>
-                </div>
-            }
-        }
-    }
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index", new{}, new{@class="btn btn-outline-secondary"})
 </p>

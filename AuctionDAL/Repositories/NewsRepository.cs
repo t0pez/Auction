@@ -5,10 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using AuctionDAL.Context;
 using AuctionDAL.Exceptions;
+using AuctionDAL.Interfaces;
 using AuctionDAL.Models;
 
 namespace AuctionDAL.Repositories
 {
+    /// <inheritdoc cref="INewsRepository"/>
     public class NewsRepository : INewsRepository
     {
         private readonly AuctionContext _context;
@@ -26,7 +28,7 @@ namespace AuctionDAL.Repositories
 
         public async Task<News> GetNewsByIdAsync(Guid id)
         {
-            var item = await News.FirstOrDefaultAsync(lot => lot.Id == id);
+            var item = await News.FirstOrDefaultAsync(news => news.Id == id);
 
             if (item is null)
                 throw new ItemNotFoundException(nameof(item));
@@ -36,7 +38,7 @@ namespace AuctionDAL.Repositories
 
         public async Task CreateNewsAsync(News news)
         {
-            if (await News.AnyAsync(l => l.Id == news.Id))
+            if (await News.AnyAsync(n => n.Id == news.Id))
                 throw new ItemAlreadyExistsException(nameof(news));
 
             News.Add(news);

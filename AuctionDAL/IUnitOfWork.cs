@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AuctionDAL.Interfaces;
 using AuctionDAL.Models;
 using AuctionDAL.Repositories;
 using Microsoft.AspNet.Identity;

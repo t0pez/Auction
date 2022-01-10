@@ -14,9 +14,16 @@ using System.Threading.Tasks;
 
 namespace AuctionBLL.Services
 {
+    /// <inheritdoc cref="ILotsService"/>
     public class LotsService : ILotsService, IDisposable
     {
+        /// <summary>
+        /// Event service that contains lots that need to open
+        /// </summary>
         private readonly ITimeEventService<Guid> _openTimeEventService;
+        /// <summary>
+        /// Event service that contains lots that need to close
+        /// </summary>
         private readonly ITimeEventService<Guid> _closeTimeEventService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -162,6 +169,12 @@ namespace AuctionBLL.Services
             }
         }
 
+        /// <summary>
+        /// Opens lot
+        /// </summary>
+        /// <param name="lotId">Lot id</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">When lot state is incorrect or not found</exception>
         public async Task OpenLotAsync(Guid lotId)
         {
             try
@@ -185,6 +198,12 @@ namespace AuctionBLL.Services
             }
         }
 
+        /// <summary>
+        /// Closes lot
+        /// </summary>
+        /// <param name="lotId">Lot id</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">When lot state is incorrect or not found</exception>
         public async Task CloseLotAsync(Guid id)
         {
             try
@@ -226,6 +245,12 @@ namespace AuctionBLL.Services
             }
         }
 
+        /// <summary>
+        /// Adds lots to corresponding TimeEventServices
+        /// </summary>
+        /// <remarks>
+        /// Gets lots from repository and sets to TimeEventServices corresponding to its status
+        /// </remarks>
         private void InitializeListeners()
         {
             var createdLots =
@@ -244,7 +269,8 @@ namespace AuctionBLL.Services
                 || lot.StartPrice is null
                 || lot.StartPrice.Amount < 0
                 || lot.MinStepPrice is null
-                || lot.MinStepPrice.Amount < 0)
+                || lot.MinStepPrice.Amount < 0
+                || lot.StartPrice.Currency != lot.MinStepPrice.Currency)
                 throw new ArgumentException("Argument parameters is not correct", nameof(lot));
         }
 

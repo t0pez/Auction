@@ -10,6 +10,7 @@ using AutoMapper;
 
 namespace AuctionBLL.Services
 {
+    /// <inheritdoc cref="INewsService"/>
     public class NewsService : INewsService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -42,7 +43,7 @@ namespace AuctionBLL.Services
             }
             catch (ItemNotFoundException)
             {
-                throw;
+                throw new InvalidOperationException("News not found");
             }
         }
 
@@ -61,9 +62,9 @@ namespace AuctionBLL.Services
                 await _unitOfWork.NewsRepository.CreateNewsAsync(mapped);
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch (ItemAlreadyExistsException) // TODO: ? Remove this (id sets as new)
+            catch (ItemAlreadyExistsException)
             {
-                throw;
+                throw new InvalidOperationException("News already exists");
             }
 
             return news;
@@ -83,7 +84,7 @@ namespace AuctionBLL.Services
             }
             catch (ItemNotFoundException)
             {
-                throw;
+                throw new InvalidOperationException("News not found");
             }
 
             return news;
@@ -98,7 +99,7 @@ namespace AuctionBLL.Services
             }
             catch (ItemNotFoundException)
             {
-                throw;
+                throw new InvalidOperationException("News not found");
             }
         }
     }
