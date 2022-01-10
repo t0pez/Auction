@@ -113,7 +113,9 @@ namespace AuctionWeb.Controllers
             }
             catch (ArgumentException e)
             {
-                return RedirectToAction("Details", new {lotId});
+                ModelState.AddModelError("", e.Message);
+
+                return RedirectToAction("Details", lotId);
             }
             catch (InvalidOperationException)
             {
