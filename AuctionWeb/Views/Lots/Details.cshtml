@@ -12,11 +12,11 @@
 <div>
     
     <hr/>
-
+    @Html.ValidationSummary("", new{@class="text-danger"})
     <div class="row">
-
+        
         <div class="col-6">
-            
+
             <div class="mb-3">
                 <div>
                     @Html.LabelFor(model => model.StartDate, "Start date:", new { @class = "form-label fw-bolder" })
@@ -45,19 +45,19 @@
                     @Html.DisplayFor(model => model.StartPrice.Amount)
                     @Html.DisplayFor(model => model.StartPrice.Currency.IsoName)
                 </div>
-                
+
                 <div>
                     @Html.LabelFor(model => model.ActualPrice, "Actual price:", new { @class = "form-label fw-bolder" })
                     @Html.DisplayFor(model => model.ActualPrice.Amount)
                     @Html.DisplayFor(model => model.ActualPrice.Currency.IsoName)
                 </div>
-                
+
                 <div>
                     @Html.LabelFor(model => model.MinStepPrice, "Minimal step price:", new { @class = "form-label fw-bolder" })
                     @Html.DisplayFor(model => model.MinStepPrice.Amount)
                     @Html.DisplayFor(model => model.MinStepPrice.Currency.IsoName)
                 </div>
-                
+
             </div>
 
             @{
@@ -81,11 +81,11 @@
                         }
 
                     }
-                    else if(Model.Status == LotStatus.Opened && Model.UserCanMakeStep(userId))
+                    else if (Model.Status == LotStatus.Opened && Model.UserCanMakeStep(userId))
                     {
                         using (Html.BeginForm("SetNewPrice", "Lots", FormMethod.Post))
                         {
-
+                            @Html.ValidationMessageFor(model => model, "", new { @class = "text-danger" })
                             var newPrice = 0m;
 
                             <div class="row">
@@ -95,8 +95,8 @@
                                 </div>
 
                                 <div class="form-floating mb-3 col-md-6">
-                                    @Html.Editor(nameof(newPrice), new {htmlAttributes = new {@class = "form-control", @placeholder = "New price"}})
-                                    @Html.Label(nameof(newPrice), htmlAttributes: new {@class = " "})
+                                    @Html.Editor(nameof(newPrice), new { htmlAttributes = new { @class = "form-control", @placeholder = "New price" } })
+                                    @Html.Label(nameof(newPrice), htmlAttributes: new { @class = " " })
                                 </div>
 
                                 <div class="mb-3 col-md-4">
@@ -113,44 +113,44 @@
         <div class="col-6">
 
             <div class="">
-                @Html.LabelFor(model => model.Name, "Name:", new {@class = "form-label fw-bolder"})
+                @Html.LabelFor(model => model.Name, "Name:", new { @class = "form-label fw-bolder" })
                 @Html.DisplayFor(model => model.Name)
             </div>
 
             <div class="">
-                @Html.LabelFor(model => model.Description, "Description:", new {@class = "form-label fw-bolder"})
+                @Html.LabelFor(model => model.Description, "Description:", new { @class = "form-label fw-bolder" })
                 @Html.DisplayFor(model => model.Description)
             </div>
-            
+
             <div class="row mb-3">
                 <div class="col-md-6 align-self-center">
                     @Html.LabelFor(model => model.Owner, "Owner:", new { @class = "form-label fw-bolder" })
                     @Html.DisplayFor(model => model.Owner.FirstName)
                     @Html.DisplayFor(model => model.Owner.LastName)
                 </div>
-                
+
                 <div class="col-md ">
                     @Html.ActionLink("View account", "Details", "Users", new { userId = Model.Owner.Id }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
                 </div>
-                <hr class="mt-2"/>
+                <hr class="mt-2" />
             </div>
             @if (Model.Acquirer != null)
             {
-                
+
                 var acquirerLabelText = "";
                 acquirerLabelText = Model.Status == LotStatus.Opened ? "Lot leader:" : "Acquirer:";
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6 align-self-center">
-                        @Html.LabelFor(model => model.Acquirer, acquirerLabelText, new {@class = "form-label fw-bolder"})
+                        @Html.LabelFor(model => model.Acquirer, acquirerLabelText, new { @class = "form-label fw-bolder" })
                         @Html.DisplayFor(model => model.Acquirer.FirstName)
                         @Html.DisplayFor(model => model.Acquirer.LastName)
                     </div>
 
                     <div class="col-md ">
-                        @Html.ActionLink("View account", "Details", "Users", new {userId = Model.Acquirer.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                        @Html.ActionLink("View account", "Details", "Users", new { userId = Model.Acquirer.Id }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
                     </div>
-                    <hr class="mt-2"/>
+                    <hr class="mt-2" />
                 </div>
             }
         </div>

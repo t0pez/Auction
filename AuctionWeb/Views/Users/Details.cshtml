@@ -10,20 +10,20 @@
 <div>
     <hr/>
     <div class="row">
-
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="col-6">
             <div>
-                @Html.LabelFor(model => model.FirstName, "First name:", new {@class = "form-label fw-bolder"})
+                @Html.LabelFor(model => model.FirstName, "First name:", new { @class = "form-label fw-bolder" })
                 @Html.DisplayFor(model => model.FirstName)
             </div>
 
             <div>
-                @Html.LabelFor(model => model.LastName, "Last name:", new {@class = "form-label fw-bolder"})
+                @Html.LabelFor(model => model.LastName, "Last name:", new { @class = "form-label fw-bolder" })
                 @Html.DisplayFor(model => model.LastName)
             </div>
 
             <div>
-                @Html.LabelFor(model => model.UserName, "User name:", new {@class = "form-label fw-bolder"})
+                @Html.LabelFor(model => model.UserName, "User name:", new { @class = "form-label fw-bolder" })
                 @Html.DisplayFor(model => model.UserName)
             </div>
 
@@ -37,7 +37,7 @@
                     @Html.DisplayFor(model => model.Role)
                 </dd>
             }
-            
+
             <p>
                 @if (User.IsInRole("admin") && User.Identity.GetUserId() != Model.Id)
                 {
@@ -68,7 +68,7 @@
                         }
                     }
                 }
-    
+
             </p>
         </div>
 
@@ -91,21 +91,21 @@
                         <label class="col-md-6 align-self-center">@money.Amount @money.Currency.IsoName</label>
                         @if (User.Identity.GetUserId() == Model.Id)
                         {
-                            @Html.ActionLink("Top up", "TopUpUserBalance", "Users", new {moneyId = money.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                            @Html.ActionLink("Top up", "TopUpUserBalance", "Users", new { moneyId = money.Id }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
                         }
-                        <hr class="mt-2"/>
+                        <hr class="mt-2" />
                     </dd>
                 }
             }
-            
+
             @if (User.Identity.GetUserId() == Model.Id && Model.Wallet.Money.Count < 4)
             {
-                @Html.ActionLink("Create wallet", "CreateUserWallet", "Users", new {area = ""}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                @Html.ActionLink("Create wallet", "CreateUserWallet", "Users", new { area = "" }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
             }
 
         </div>
 
-        <hr class="my-3"/>
+        <hr class="my-3" />
 
         <dt>
             @Html.DisplayNameFor(model => model.OwnedLots)
@@ -123,9 +123,9 @@
             {
                 <dd class="row mb-3">
                     <label class="col-md-6 align-self-center">@lot.Name</label>
-                    @Html.ActionLink("View details", "Details", "Lots", new {id = lot.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
+                    @Html.ActionLink("View details", "Details", "Lots", new { id = lot.Id }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
                 </dd>
-                <hr class="mt-2"/>
+                <hr class="mt-2" />
             }
         }
 
@@ -145,8 +145,8 @@
             {
                 <dd class="row mb-3">
                     <label class="col-md-6 align-self-center">@lot.Name</label>
-                    @Html.ActionLink("View details", "Details", "Lots", new {id = lot.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
-                    <hr class="mt-2"/>
+                    @Html.ActionLink("View details", "Details", "Lots", new { id = lot.Id }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
+                    <hr class="mt-2" />
                 </dd>
             }
         }
@@ -167,8 +167,8 @@
             {
                 <dd class="row mb-3">
                     <label class="col-md-6 align-self-center">@lot.Name</label>
-                    @Html.ActionLink("View details", "Details", "Lots", new {id = lot.Id}, new {@class = "btn btn-outline-secondary col-md offset-md-4"})
-                    <hr class="mt-2"/>
+                    @Html.ActionLink("View details", "Details", "Lots", new { id = lot.Id }, new { @class = "btn btn-outline-secondary col-md offset-md-4" })
+                    <hr class="mt-2" />
                 </dd>
             }
         }

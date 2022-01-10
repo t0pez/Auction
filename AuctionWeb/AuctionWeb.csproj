@@ -192,6 +192,7 @@
     </Compile>
     <Compile Include="Infrastructure\AutomapperNinjectModule.cs" />
     <Compile Include="Infrastructure\DependencyInjectionConfiguration.cs" />
+    <Compile Include="Infrastructure\Filters\DataModelStateAttribute.cs" />
     <Compile Include="Infrastructure\PresentationLayerAutoMapperProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Lots\LotCreateViewModel.cs" />

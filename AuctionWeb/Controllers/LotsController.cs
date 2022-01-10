@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using AuctionBLL.Interfaces;
+using AuctionWeb.Infrastructure.Filters;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace AuctionWeb.Controllers
@@ -37,6 +38,7 @@ namespace AuctionWeb.Controllers
             return View(mapped);
         }
 
+        [RestoreModelStateFromTempData]
         public async Task<ActionResult> Details(Guid id)
         {
             try
@@ -49,11 +51,12 @@ namespace AuctionWeb.Controllers
             }
             catch (InvalidOperationException)
             {
-                return RedirectToAction("Index", new {id});
+                return RedirectToAction("Index");
             }
         }
 
         [Authorize(Roles = "user, admin")]
+        [RestoreModelStateFromTempData]
         public async Task<ActionResult> Create()
         {
             var userId = User.Identity.GetUserId();
@@ -73,8 +76,9 @@ namespace AuctionWeb.Controllers
             return View();
         }
 
-        [Authorize(Roles = "user, admin")]
         [HttpPost]
+        [Authorize(Roles = "user, admin")]
+        [SetTempDataModelState]
         public async Task<ActionResult> Create(LotCreateViewModel viewModel)
         {
             try
@@ -89,7 +93,7 @@ namespace AuctionWeb.Controllers
             }
             catch (ArgumentException e)
             {
-                ModelState.AddModelError("", e.Message);
+                ModelState.AddModelError("ArgumentException", e.Message);
 
                 return View("Create", viewModel);
             }
@@ -99,8 +103,9 @@ namespace AuctionWeb.Controllers
             }
         }
 
-        [Authorize(Roles = "user, admin")]
         [HttpPost]
+        [Authorize(Roles = "user, admin")]
+        [SetTempDataModelState]
         public async Task<ActionResult> SetNewPrice(Guid lotId, decimal newPrice)
         {
             try
@@ -113,7 +118,7 @@ namespace AuctionWeb.Controllers
             }
             catch (ArgumentException e)
             {
-                ModelState.AddModelError("", e.Message);
+                ModelState.AddModelError("SetPriceError", e.Message);
 
                 return RedirectToAction("Details", lotId);
             }
@@ -123,8 +128,9 @@ namespace AuctionWeb.Controllers
             }
         }
 
-        [Authorize(Roles = "user, admin")]
         [HttpPost]
+        [Authorize(Roles = "user, admin")]
+        [SetTempDataModelState]
         public async Task<ActionResult> SetUserAsParticipant(Guid lotId)
         {
             try
@@ -133,11 +139,11 @@ namespace AuctionWeb.Controllers
 
                 await _lotsService.AddParticipantAsync(lotId, userId);
 
-                return RedirectToAction(nameof(Details), new {id = lotId});
+                return RedirectToAction("Details", new {id = lotId});
             }
             catch (ArgumentException e)
             {
-                ModelState.AddModelError("", e.Message);
+                ModelState.AddModelError("SetParticipantError", e.Message);
 
                 return RedirectToAction("Details", new {id = lotId});
             }
