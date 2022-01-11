@@ -1,5 +1,4 @@
 ﻿using AuctionBLL.Dto;
-using AuctionBLL.Services;
 using AuctionWeb.ViewModels.Money;
 using AuctionWeb.ViewModels.Users;
 using AutoMapper;
@@ -154,7 +153,6 @@ namespace AuctionWeb.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
 
         public async Task<ActionResult> CreateUserWallet()
         {

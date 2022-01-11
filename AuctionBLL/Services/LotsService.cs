@@ -7,6 +7,7 @@ using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AuctionBLL.Extensions.Dto;
@@ -101,8 +102,11 @@ namespace AuctionBLL.Services
             try
             {
                 var lot = await _unitOfWork.LotsRepository.GetLotByIdAsync(lotId);
-                var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = await _unitOfWork.UserManager.Users.Include(u => u.Wallet.Money)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
 
+                if (user is null)
+                    throw new InvalidOperationException("User not found");
                 if (lot.Status is (int) LotStatus.Closed or (int) LotStatus.Cancelled)
                     throw new InvalidOperationException("Can not add participant to closed or cancelled lot");
                 if (lot.Participants.Contains(user))
