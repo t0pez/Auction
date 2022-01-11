@@ -57,7 +57,7 @@ namespace AuctionBLL.Services
             }
             catch (ItemNotFoundException)
             {
-                throw;
+                throw new InvalidOperationException("Lot not found");
             }
         }
 
@@ -74,8 +74,7 @@ namespace AuctionBLL.Services
                 throw new InvalidOperationException("User is not authorized or not found");
 
             if (owner.HasMoneyOfCurrency(lotDto.StartPrice.Currency.Value) == false)
-                throw new InvalidOperationException( // TODO: ValidationException
-                    $"Need wallet with this type of currency {lotDto.StartPrice.Currency.IsoName}");
+                throw new InvalidOperationException($"Need wallet with this type of currency {lotDto.StartPrice.Currency.IsoName}");
             
             lotDto.CreatingInitialize();
 
@@ -89,7 +88,7 @@ namespace AuctionBLL.Services
             }
             catch (ItemAlreadyExistsException)
             {
-                throw;
+                throw new InvalidOperationException("Lot not found");
             }
 
             _openTimeEventService.Add(lotDto.Id, (DateTime) lotDto.StartDate);
@@ -171,8 +170,7 @@ namespace AuctionBLL.Services
             }
             catch (ItemNotFoundException)
             {
-                // TODO: Custom Exception
-                throw;
+                throw new InvalidOperationException("Lot not found");
             }
             
             if (lot.Status == (int) LotStatus.Opened)
