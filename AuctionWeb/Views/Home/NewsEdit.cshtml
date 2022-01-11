@@ -6,7 +6,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    @Scripts.Render("~/bundles/jqueryval")
+@section Scripts {@Scripts.Render("~/bundles/jqueryval")}
     <div>
 
         <h4>Edit news</h4>

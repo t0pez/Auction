@@ -30,7 +30,7 @@ namespace AuctionWeb.Controllers
             return View(mappedItems);
         }
 
-        public async Task<ActionResult> NewsCreate()
+        public ActionResult NewsCreate()
         {
             return View(new NewsCreateViewModel());
         }
