@@ -1,0 +1,102 @@
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+<div class="navbar navbar-expand-sm navbar-dark bg-primary fixed-top">
+    <div class="container-fluid">
+        
+        <div class="">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="navbar-collapse">
+                <span class="navbar-toggler-icon"></span> 
+            </button>
+            @Html.ActionLink("Auction", "Index", "Home", new {area = ""}, new {@class = "navbar-brand"})
+        </div>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    @Html.ActionLink("Home", "Index", "Home", new {area = ""}, new {@class = "nav-link active"})
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">
+                        Lots
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li>
+                            @Html.ActionLink("View lots", "Index", "Lots", new { area = "" }, new { @class = "dropdown-item" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Create lot", "Create", "Lots", new { area = "" }, new { @class = "dropdown-item" })
+                        </li>
+                    </ul>
+                </li>
+                
+                @if (User.IsInRole("admin"))
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("Users", "Index", "Users", new {area = ""}, new {@class = "nav-link"})
+                    </li>
+                }
+
+            </ul>
+
+            <ul class="nav navbar-nav position-relative">
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">
+                            @User.Identity.Name
+                        </a>
+
+                        <ul class="dropdown-menu position-absolute top-100 start-0">
+                            <li>
+                                @Html.ActionLink("Account", "Details", "Users", new {userId=User.Identity.GetUserId()}, new {@class = "dropdown-item"})
+                            </li>
+                            <li>
+                                <hr/>
+                            </li>
+                            <li >
+                                @Html.ActionLink("Logout", "LogOut", "Users", new {area = ""}, new {@class = "dropdown-item"})
+                            </li>
+                        </ul>
+                    </li>
+                   
+                }
+                else
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("Login", "LogIn", "Users", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Register", "Create", "Users", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                }
+
+            </ul>
+        </div>
+
+    </div>
+</div>
+<div class="container body-content">
+    @RenderBody()
+    <hr/>
+    <footer>
+        <p>&copy; @DateTime.Now.Date - My ASP.NET Application</p>
+    </footer>
+</div>
+
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/jquery")
+@RenderSection("scripts", required: false)
+</body>
+</html>

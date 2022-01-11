@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNet.Identity
+@model AuctionWeb.ViewModels.Money.MoneyCreateViewModel
+
+@{ ViewBag.Title = "Create"; }
+
+<h2 class="mt-3">Create</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $.validator.methods.range = function(value, element, param) {
+            var globalizedValue = value.replace(",", ".");
+            return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+        }
+
+        $.validator.methods.number = function(value, element) {
+            return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+        }
+    </script>
+}
+    <div class="">
+        <hr/>
+        @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+
+        @using (Html.BeginForm("CreateUserWallet", "Users", FormMethod.Post))
+        {
+            <div class="d-none">
+                <input class="" id="userId" name="userId" value="@User.Identity.GetUserId()" type="text">
+            </div>
+
+            <div class="form-floating">
+                @Html.EditorFor(model => model.Amount, new {htmlAttributes = new {@class = "form-control", @placeholder = "Name"}})
+                @Html.LabelFor(model => model.Amount, htmlAttributes: new {@class = " "})
+                @Html.ValidationMessageFor(model => model.Amount, "", new {@class = "text-danger"})
+            </div>
+
+            <div class="form-floating mb-3">
+                @Html.DropDownListFor(model => model.Currency, ViewBag.Currencies as SelectList, new {@class = "form-select", @style = "min-width: 100%"})
+                @Html.LabelFor(model => model.Currency, htmlAttributes: new {@class = "form-label col-md-2"})
+                @Html.ValidationMessageFor(model => model.Currency, "", new {@class = "text-danger"})
+            </div>
+
+            <div class="">
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

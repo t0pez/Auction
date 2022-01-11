@@ -1,0 +1,51 @@
+﻿@model IEnumerable<AuctionWeb.ViewModels.News.NewsListViewModel>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="mt-4">
+    <h1>Auction</h1>
+    <p class="lead">Great auction build on ASP.NET Framework MVC5</p>
+    <p>This is a final project for EPAM's autumn .NET cources. </p> 
+    <p>It is an auction. Here you can sell or buy things you want in different currencies. All you need for this is to register your own account and create a wallet of currency, which you want to sell your or buy others items</p>
+    <p>Tradings starts automatically and you need only set a date and time of starting the process. In the end of trading your wallet will be replenished. But if there is no one made step, lot will be marked as 'Cancelled'</p>
+    <p>If you want to be a participant of lot and try to buy it, you need to set self as participant in concrete lot overview. Don't forget, that you need own wallet same currency!</p>
+</div>
+
+<div class="container">
+    
+    <hr />
+    
+    <div class="row justify-content-center">
+        @if (User.IsInRole("admin"))
+        {
+            @Html.ActionLink("Create news", "NewsCreate", new { area = "" }, new { @class = "btn btn-outline-primary col-md-4" })
+        }
+    </div>
+
+    <div class="row justify-content-center">
+       
+        <div class="col-md-8 ">
+            @foreach (var news in Model)
+            {
+                <div>
+                    <p class="fs-3">
+                        @news.Title
+                    </p>
+                </div>
+                <div>
+                    <p class="fs-5">
+                        @news.Text
+                    </p>
+                    <p class="fs-6">
+                        @news.DateOfCreation
+                    </p>
+
+                    @Html.ActionLink("View", "NewsDetails", new {id = news.Id}, new {@class = "btn btn-outline-primary"})
+                </div>
+                <hr class="mb-3"/>
+            }
+            </div>
+        </div>
+</div>

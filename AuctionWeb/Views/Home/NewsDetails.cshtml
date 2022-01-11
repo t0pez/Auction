@@ -1,0 +1,59 @@
+﻿@model AuctionWeb.ViewModels.News.NewsListViewModel
+
+@{
+    ViewBag.Title = "NewsDetails";
+}
+
+<h2 class="mt-3">News Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOfCreation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateOfCreation)
+        </dd>
+
+    </dl>
+</div>
+<p class="d-inline-block">
+@if (User.IsInRole("admin"))
+{
+
+
+    using (Html.BeginForm("NewsDelete", "Home", FormMethod.Post, new {@class = "d-inline-block me-3"}))
+    {
+        <div class="d-none">
+            <input class="" id="id" name="id" value="@Model.Id" type="text">
+        </div>
+
+        <div class="d-inline-block mb-3">
+            <button type="submit" class="btn btn-primary">Delete</button>
+        </div>
+    }
+
+    @Html.ActionLink("Edit", "NewsEdit", new {id = Model.Id}, new {@class = "btn btn-primary d-inline-block me-3"})
+
+}
+    @Html.ActionLink("Back to Main page", "Index", new { }, new { @class = "btn btn-outline-secondary" })
+
+</p>
