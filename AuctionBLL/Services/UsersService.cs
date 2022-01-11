@@ -28,7 +28,7 @@ namespace AuctionBLL.Services
 
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
-            var unmapped = await _unitOfWork.UserManager.Users.ToListAsync();
+            var unmapped = await _unitOfWork.UserManager.Users.Include(user => user.Wallet).ToListAsync();
 
             var mapped = _mapper.Map<IEnumerable<UserDto>>(unmapped);
 
@@ -37,7 +37,7 @@ namespace AuctionBLL.Services
 
         public async Task<UserDto> GetByUserIdAsync(string userId)
         {
-            var unmapped = await _unitOfWork.UserManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
+            var unmapped = await _unitOfWork.UserManager.Users.Include(user => user.Wallet.Money).FirstOrDefaultAsync(user => user.Id == userId);
 
             if (unmapped is null)
                 throw new InvalidOperationException("User not found");
@@ -65,7 +65,7 @@ namespace AuctionBLL.Services
                 UserName = newUser.UserName,
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
-                Wallet = new Wallet{Id = Guid.NewGuid()},
+                Wallet = new Wallet(Guid.NewGuid()),
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
@@ -81,13 +81,16 @@ namespace AuctionBLL.Services
 
         public async Task CreateUserMoneyAsync(string userId, MoneyDto money)
         {
-            var user = await _unitOfWork.UserManager.FindByIdAsync(userId);
+            var user = await _unitOfWork.UserManager.Users.Include(u => u.Wallet.Money)
+                .FirstOrDefaultAsync(x => x.Id == userId);
 
             if (user is null)
                 throw new InvalidOperationException("User not found");
-
-            var mappedMoney = _mapper.Map<Money>(money); 
+            if (user.HasMoneyOfCurrency(money.Currency.Value))
+                throw new ArgumentException("Wallet of this currency already exists");
             
+            var mappedMoney = _mapper.Map<Money>(money);
+
             user.Wallet.Money.Add(mappedMoney);
             await _unitOfWork.UserManager.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();

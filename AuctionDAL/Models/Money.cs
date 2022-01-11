@@ -6,5 +6,10 @@ namespace AuctionDAL.Models
     {
         public decimal Amount { get; set; }
         public int Currency { get; set; }
+
+        protected Money()
+        {
+            
+        }
     }
 }

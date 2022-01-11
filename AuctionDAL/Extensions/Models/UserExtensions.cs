@@ -8,8 +8,6 @@ namespace AuctionDAL.Extensions.Models
     {
         public static bool HasMoneyOfCurrency(this User user, int currency)
         {
-            if (user.Wallet.Money.Count() == 0)
-                return false;
             return user.Wallet.Money.Any(money => money.Currency == currency);
         }
 

@@ -9,6 +9,8 @@ namespace AuctionDAL.Context
     {
         public AuctionContext() : base("AuctionContext")
         {
+            Configuration.LazyLoadingEnabled = true;
+            Configuration.ProxyCreationEnabled = true;
         }
         
         public DbSet<Lot> Lots { get; set; }
@@ -23,7 +25,7 @@ namespace AuctionDAL.Context
             modelBuilder.Configurations.Add(new LotConfiguration());
             modelBuilder.Configurations.Add(new WalletConfiguration());
             modelBuilder.Configurations.Add(new UserConfiguration());
-
+            modelBuilder.Configurations.Add(new NewsConfiguration());
         }
     }
 }

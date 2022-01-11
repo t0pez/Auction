@@ -46,25 +46,24 @@ namespace AuctionWeb.Controllers
 
         public async Task<ActionResult> Details(string userId)
         {
-            UserDto unmapped;
             try
             {
-                unmapped = await _usersService.GetByUserIdAsync(userId);
+                var unmapped = await _usersService.GetByUserIdAsync(userId);
+                var mapped = _mapper.Map<UserDetailsViewModel>(unmapped);
+
+                var userService = HttpContext.GetOwinContext().GetUserManager<IUsersService>();
+                
+                var userRoles = await userService.GetUserRolesAsync(userId);
+                var role = String.Join(" ", userRoles);
+
+                mapped.Role = role;
+
+                return View(mapped);
             }
-            catch (Exception e)
+            catch (InvalidOperationException)
             {
                 return RedirectToAction("Index", "Home");
             }
-
-            var mapped = _mapper.Map<UserDetailsViewModel>(unmapped);
-
-            var userService = HttpContext.GetOwinContext().GetUserManager<IUsersService>();
-            var userRoles = await userService.GetUserRolesAsync(userId);
-            var role = String.Join(" ", userRoles);
-
-            mapped.Role = role;
-
-            return View(mapped);
         }
 
         [HttpPost]
@@ -188,7 +187,7 @@ namespace AuctionWeb.Controllers
             return RedirectToAction("Details", new {userId = userId});
         }
 
-        public async Task<ActionResult> TopUpUserBalance(Guid moneyId)
+        public ActionResult TopUpUserBalance(Guid moneyId)
         {
             return View(new MoneyTopUpViewModel(){MoneyId = moneyId});
         }
@@ -203,17 +202,15 @@ namespace AuctionWeb.Controllers
 
                 return RedirectToAction("Details", new { userId });
             }
-            catch (InvalidOperationException)
+            catch (ArgumentException)
             {
                 ModelState.AddModelError("", "Amount to add can not be less than 0");
-                return View();
+                return View(topUpViewModel);
             }
-            catch (Exception e)
+            catch (InvalidOperationException)
             {
-                return null;
+                return View("Index");
             }
-
-            
         }
     }
 }

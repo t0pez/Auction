@@ -16,7 +16,5 @@ namespace AuctionWeb.ViewModels.Lots
         public string Description { get; set; }
 
         public MoneyDto ActualPrice { get; set; }
-
-        // TODO: Set start price?
     }
 }

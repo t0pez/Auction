@@ -31,7 +31,7 @@ namespace AuctionDAL.Migrations
                 UserName = "user",
                 FirstName = "First",
                 LastName = "Client",
-                Wallet = new Wallet { Id = Guid.NewGuid() },
+                Wallet = new Wallet(Guid.NewGuid()),
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
@@ -42,7 +42,7 @@ namespace AuctionDAL.Migrations
                 UserName = "admin",
                 FirstName = "First",
                 LastName = "Admin",
-                Wallet = new Wallet { Id = Guid.NewGuid() },
+                Wallet = new Wallet(Guid.NewGuid()),
                 OwnedLots = new List<Lot>(),
                 LotsAsParticipant = new List<Lot>()
             };
