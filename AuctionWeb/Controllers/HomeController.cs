@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using AuctionBLL.Dto;
+﻿using AuctionBLL.Dto;
 using AuctionBLL.Interfaces;
-using AuctionBLL.Services;
 using AuctionWeb.ViewModels.News;
 using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace AuctionWeb.Controllers
 {
@@ -27,7 +27,9 @@ namespace AuctionWeb.Controllers
 
             var mappedItems = _mapper.Map<IEnumerable<NewsListViewModel>>(unmappedNews);
 
-            return View(mappedItems);
+            var sortedItems = mappedItems.OrderByDescending(model => model.DateOfCreation);
+
+            return View(sortedItems);
         }
 
         public ActionResult NewsCreate()

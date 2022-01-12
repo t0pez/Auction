@@ -60,7 +60,7 @@ namespace AuctionBLL.Services
             try
             {
                 await _unitOfWork.NewsRepository.CreateNewsAsync(mapped);
-                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
             }
             catch (ItemAlreadyExistsException)
             {
@@ -80,7 +80,7 @@ namespace AuctionBLL.Services
             try
             {
                 await _unitOfWork.NewsRepository.UpdateNewsAsync(mapped);
-                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
             }
             catch (ItemNotFoundException)
             {
@@ -95,7 +95,7 @@ namespace AuctionBLL.Services
             try
             {
                 await _unitOfWork.NewsRepository.DeleteNewsAsync(id);
-                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
             }
             catch (ItemNotFoundException)
             {

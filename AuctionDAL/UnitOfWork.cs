@@ -30,9 +30,9 @@ namespace AuctionDAL
         public UserManager<User> UserManager => _userManager;
         public RoleManager<IdentityRole> RoleManager => _roleManager;
 
-        public async Task<int> SaveChangesAsync()
+        public int SaveChanges()
         {
-            return await _context.SaveChangesAsync();
+            return _context.SaveChanges();
         }
 
         //public void Dispose()

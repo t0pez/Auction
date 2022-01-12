@@ -76,7 +76,7 @@ namespace AuctionBLL.Services
                 throw new InvalidOperationException("Smth has go wrong");
 
             await _unitOfWork.UserManager.AddToRoleAsync(user.Id, newUser.Role);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
         }
 
         public async Task CreateUserMoneyAsync(string userId, MoneyDto money)
@@ -93,7 +93,7 @@ namespace AuctionBLL.Services
 
             user.Wallet.Money.Add(mappedMoney);
             await _unitOfWork.UserManager.UpdateAsync(user);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
         }
 
         public async Task<ClaimsIdentity> LoginAsync(UserDto userDto)
@@ -116,7 +116,7 @@ namespace AuctionBLL.Services
                 throw new InvalidOperationException("User not found");
 
             await _unitOfWork.UserManager.AddToRoleAsync(userId, role);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
         }
 
         public async Task RemoveRoleAsync(string userId, string role)
@@ -127,7 +127,7 @@ namespace AuctionBLL.Services
                 throw new InvalidOperationException("User not found");
 
             await _unitOfWork.UserManager.RemoveFromRoleAsync(userId, role);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
         }
 
         public async Task<UserDto> TopUpUserBalanceAsync(string userId, Guid moneyId, decimal addedAmount)
@@ -144,7 +144,7 @@ namespace AuctionBLL.Services
             userMoneyAmount.Amount += addedAmount;
 
             await _unitOfWork.UserManager.UpdateAsync(user);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
 
             var mapped = _mapper.Map<UserDto>(user);
             return mapped;

@@ -14,6 +14,6 @@ namespace AuctionDAL
         UserManager<User> UserManager { get; }
         RoleManager<IdentityRole> RoleManager { get; }
 
-        Task<int> SaveChangesAsync();
+        int SaveChanges();
     }
 }

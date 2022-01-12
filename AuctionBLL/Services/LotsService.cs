@@ -85,7 +85,7 @@ namespace AuctionBLL.Services
             try
             {
                 await _unitOfWork.LotsRepository.CreateLotAsync(lotModel);
-                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
             }
             catch (ItemAlreadyExistsException)
             {
@@ -122,7 +122,7 @@ namespace AuctionBLL.Services
 
                 await Task.WhenAll(lotUpdateTask, userUpdateTask);
 
-                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
 
                 var mapped = _mapper.Map<LotDto>(lot);
 
@@ -158,7 +158,7 @@ namespace AuctionBLL.Services
             _closeTimeEventService.Prolong(lot.Id, lot.ProlongationTime);
 
             await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
                 
             var mapped = _mapper.Map<LotDto>(lot);
 
@@ -184,7 +184,7 @@ namespace AuctionBLL.Services
             lot.EndDate = DateTime.Now + lot.ProlongationTime;
 
             await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
             
             _closeTimeEventService.Add(lot.Id, (DateTime)lot.EndDate);
         }
@@ -220,7 +220,7 @@ namespace AuctionBLL.Services
             }
 
             await _unitOfWork.LotsRepository.UpdateLotAsync(lot);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.SaveChanges();
         }
 
         private void InitializeListeners()
