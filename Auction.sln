@@ -1,10 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionWeb", "AuctionWeb\AuctionWeb.csproj", "{22978172-2394-433E-AB0C-55A2E50CCC0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionDAL", "AuctionDAL\AuctionDAL.csproj", "{E3CF8AFC-1760-44CF-A886-2D3624D8571F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuctionDAL", "AuctionDAL\AuctionDAL.csproj", "{E3CF8AFC-1760-44CF-A886-2D3624D8571F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionBLL", "AuctionBLL\AuctionBLL.csproj", "{1364D659-2FE5-455E-8E69-769E46BFE595}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuctionBLL", "AuctionBLL\AuctionBLL.csproj", "{1364D659-2FE5-455E-8E69-769E46BFE595}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AFE0719E-1F32-4052-8500-67DE2DB37D65}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +32,11 @@ Global
 		{1364D659-2FE5-455E-8E69-769E46BFE595}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1364D659-2FE5-455E-8E69-769E46BFE595}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1364D659-2FE5-455E-8E69-769E46BFE595}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87E7401E-9AD6-48C6-B980-7AE5BEDFDF1B}
 	EndGlobalSection
 EndGlobal
